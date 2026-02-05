@@ -1,1 +1,1 @@
-# saju-yonsei
+# saju.wiki
