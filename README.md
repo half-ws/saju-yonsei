@@ -1,1 +1,1 @@
-# saju.wiki
+# saju-wiki
