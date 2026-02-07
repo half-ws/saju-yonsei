@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 기본: 모든 접근 차단
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 사용자 프로필 (닉네임 등)
+    match /users/{userId} {
+      // 누구나 읽기 가능 (닉네임 중복 체크용)
+      allow read: if true;
+      // 본인만 쓰기
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // 커스텀 유명인 DB (사용자 추가)
+    match /celebrity_custom/{docId} {
+      // 누구나 읽기 가능
+      allow read: if true;
+      // 로그인한 사용자만 추가, contributor.uid 검증
+      allow create: if request.auth != null
+                    && request.resource.data.contributor.uid == request.auth.uid;
+      // 삭제: 기여자 본인 또는 관리자만
+      allow delete: if request.auth != null
+                    && (
+                      resource.data.contributor.uid == request.auth.uid
+                      || request.auth.token.email == 'aksd3741@gmail.com'
+                    );
+      // 수정 불가
+      allow update: if false;
+    }
+
+    // 피드백 수납칸 (guestbook)
+    match /guestbook/{docId} {
+      // 누구나 읽기 가능
+      allow read: if true;
+      // 로그인한 사용자만 작성, uid + email 검증 (스푸핑 방지)
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.email == request.auth.token.email;
+      // 삭제: 본인 또는 관리자만
+      allow delete: if request.auth != null
+                    && (
+                      resource.data.uid == request.auth.uid
+                      || request.auth.token.email == 'aksd3741@gmail.com'
+                    );
+      // 수정 불가
+      allow update: if false;
+    }
+  }
+}
