@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 보안 헤더 -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com/firebasejs/ https://apis.google.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://accounts.google.com https://*.firebaseapp.com; img-src 'self' data: https:; object-src 'none'; base-uri 'self';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>사주위키</title>
+  <meta name="description" content="사주의 모든 것, 사주위키에 오신 것을 환영합니다. 사주 풀이, 만세력, 궁합, 오늘의 운세 등을 제공합니다.">
+  <meta name="keywords" content="사주, 명리, 오행, 운세, 궁합, 사주팔자, 만세력, 사주 풀이, 사주위키">
+
+  <!-- Open Graph / 링크 공유 미리보기 -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="사주위키">
+  <meta property="og:description" content="사주의 모든 것, 사주위키에 오신 것을 환영합니다. 사주 풀이, 만세력, 궁합, 오늘의 운세 등을 제공합니다.">
+  <meta property="og:image" content="https://yonsei-saju.vercel.app/og-image.png">
+  <meta property="og:url" content="https://yonsei-saju.vercel.app">
+  <meta property="og:site_name" content="사주위키">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="사주위키">
+  <meta name="twitter:description" content="사주의 모든 것, 사주위키에 오신 것을 환영합니다. 사주 풀이, 만세력, 궁합, 오늘의 운세 등을 제공합니다.">
+
+  <!-- Favicon (브라우저 탭 아이콘) -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/main.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+
+  <!-- Module Script -->
+  <script type="module" src="js/app.js?v=20260206"></script>
+</head>
+<body>
+  <!-- 페이지 전체 래퍼 -->
+  <div class="page-wrapper">
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       메인 컨테이너
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 헤더 + 탭 네비게이션 (한 줄) -->
+  <header>
+    <div class="header-left" style="cursor:pointer" onclick="switchTab('landing')">
+      <img src="logo.png" alt="사주위키 로고" class="header-logo">
+      <h1>사주위키</h1>
+    </div>
+    <nav class="tab-nav" id="tab-nav">
+      <button class="tab-btn" data-tab="today" onclick="switchTab('today')" style="display:none">오늘의 운세</button>
+      <button class="tab-btn" data-tab="bti" onclick="switchTab('bti')">사주 풀이</button>
+      <button class="tab-btn" data-tab="gunghap" onclick="switchTab('gunghap')">궁합</button>
+      <button class="tab-btn" data-tab="celeb" onclick="switchTab('celeb')">인물위키</button>
+      <button class="tab-btn" data-tab="myeongshik" onclick="switchTab('myeongshik')">전문 만세력</button>
+    </nav>
+    <div class="header-auth" id="header-auth">
+      <button class="btn-login" id="btn-login" onclick="window.__showLoginModal && window.__showLoginModal()">
+        <svg class="login-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg>
+        로그인
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="main-layout">
+      <div class="main-content">
+        
+        <!-- ═══════════════════════════════════════════════════════════════════════════
+             탭별 헤더 카드
+             ═══════════════════════════════════════════════════════════════════════════ -->
+        <!-- BTI 헤더 -->
+        <div class="tab-top-header" id="bti-top-header" style="display:none">
+          <h2>내 사주 쉽게 풀어보기</h2>
+          <p>어렵게만 느껴지던 사주팔자를 가볍게 읽어드립니다. 나는 어떤 기질을 타고났는지, 잘 맞는 방향은 무엇인지 편하게 확인해보세요.</p>
+        </div>
+
+        <!-- 전문 만세력 헤더 -->
+        <div class="tab-top-header" id="myeongshik-top-header" style="display:none">
+          <h2>전문 만세력</h2>
+          <p>사주팔자의 전체 구조를 한눈에 확인하세요. 천간/지지의 오행 분포, 십성 관계, 12운성, 대운과 세운까지 상세하게 분석합니다.</p>
+        </div>
+
+        <!-- 궁합 헤더 -->
+        <div class="tab-top-header" id="gunghap-top-header" style="display:none">
+          <h2>두 사람의 궁합 분석</h2>
+          <p>상단에서 본인 정보를 입력하고, 아래에서 상대 정보를 입력하세요. 나이별 최고의 궁합도 확인할 수 있습니다.</p>
+        </div>
+
+        <!-- 인물위키 헤더 -->
+        <div class="tab-top-header" id="celeb-top-header" style="display:none">
+          <h2>인물위키</h2>
+          <p>유명인의 사주 정보를 모아놓은 위키입니다. 검색하거나 직접 추가할 수 있습니다.</p>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════
+             사주 계산기
+             ═══════════════════════════════════════════════════════════════════════════ -->
+        <section class="global-calc" id="global-calc" style="display:none">
+          <div class="global-calc-header">
+            <div class="global-calc-label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              사주 계산기
+            </div>
+            <div class="global-calc-center-label" id="calc-person-label">
+              <input type="text" class="person-name-input" id="person1-name" value="본인" placeholder="이름 입력">
+            </div>
+            <div style="min-width:120px"></div>
+          </div>
+          
+          <div class="global-calc-body" id="global-calc-body">
+            <div class="form-row">
+              <!-- 생년월일 입력 -->
+              <div class="calc-section">
+                <div class="calc-section-label">📅 생년월일</div>
+                <div style="display:flex;gap:6px;align-items:flex-end;">
+                  <div class="input-group">
+                    <div class="stepper">
+                      <button class="step-btn step-up" tabindex="-1" onclick="step('year',1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                      </button>
+                      <input type="number" id="in-year" tabindex="1" placeholder="2000" min="1900" max="2100">
+                      <button class="step-btn step-down" tabindex="-1" onclick="step('year',-1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                      </button>
+                    </div>
+                    <label>년</label>
+                  </div>
+                  <div class="input-group">
+                    <div class="stepper">
+                      <button class="step-btn step-up" tabindex="-1" onclick="step('month',1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                      </button>
+                      <input type="number" id="in-month" tabindex="2" placeholder="01" min="1" max="12">
+                      <button class="step-btn step-down" tabindex="-1" onclick="step('month',-1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                      </button>
+                    </div>
+                    <label>월</label>
+                  </div>
+                  <div class="input-group">
+                    <div class="stepper">
+                      <button class="step-btn step-up" tabindex="-1" onclick="step('day',1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                      </button>
+                      <input type="number" id="in-day" tabindex="3" placeholder="01" min="1" max="31">
+                      <button class="step-btn step-down" tabindex="-1" onclick="step('day',-1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                      </button>
+                    </div>
+                    <label>일</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="calc-divider"></div>
+              
+              <!-- 출생시간 입력 -->
+              <div class="calc-section">
+                <div class="calc-section-label">⏰ 출생시간</div>
+                <div style="display:flex;gap:6px;align-items:flex-end;">
+                  <div class="input-group">
+                    <div class="stepper">
+                      <button class="step-btn step-up" tabindex="-1" onclick="step('hour',1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                      </button>
+                      <input type="number" id="in-hour" tabindex="4" placeholder="12" min="0" max="23">
+                      <button class="step-btn step-down" tabindex="-1" onclick="step('hour',-1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                      </button>
+                    </div>
+                    <label>시</label>
+                  </div>
+                  <div class="input-group">
+                    <div class="stepper">
+                      <button class="step-btn step-up" tabindex="-1" onclick="step('min',1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                      </button>
+                      <input type="number" id="in-min" tabindex="5" placeholder="00" min="0" max="59">
+                      <button class="step-btn step-down" tabindex="-1" onclick="step('min',-1)">
+                        <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                      </button>
+                    </div>
+                    <label>분</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="calc-divider"></div>
+              
+              <!-- 성별 선택 -->
+              <div class="calc-section">
+                <div class="calc-section-label">⚤ 성별</div>
+                <div class="gender-toggle" id="gender-btns" role="radiogroup">
+                  <button class="gender-btn active" data-gender="m" id="gender-m" onclick="setGender('m')">♂ 남</button>
+                  <button class="gender-btn" data-gender="f" id="gender-f" onclick="setGender('f')">♀ 여</button>
+                </div>
+              </div>
+
+            </div>
+            
+            <!-- 계산 버튼 -->
+            <div class="calc-btn-row" id="main-calc-btns">
+              <button class="btn-calc" id="btn-calculate" tabindex="6" onclick="onCalculate()">명식 계산 »</button>
+              <button class="btn-calc btn-save-calc" id="btn-save-to-db" tabindex="7" onclick="onSaveToDb()">명식 저장</button>
+            </div>
+            <!-- 최고의 궁합 행 (궁합 탭에서만 표시) -->
+            <div class="best-match-row" id="best-match-row" style="display:none">
+              <span class="bm-age-label">나이 설정</span>
+              <select id="bm-age-select" class="bm-age-select">
+                <option value="7">7살 연상</option>
+                <option value="6">6살 연상</option>
+                <option value="5">5살 연상</option>
+                <option value="4">4살 연상</option>
+                <option value="3">3살 연상</option>
+                <option value="2">2살 연상</option>
+                <option value="1">1살 연상</option>
+                <option value="0" selected>동갑</option>
+                <option value="-1">1살 연하</option>
+                <option value="-2">2살 연하</option>
+                <option value="-3">3살 연하</option>
+                <option value="-4">4살 연하</option>
+                <option value="-5">5살 연하</option>
+                <option value="-6">6살 연하</option>
+                <option value="-7">7살 연하</option>
+              </select>
+              <button class="btn-calc btn-gunghap-best" id="btn-gunghap-best">최고의 궁합 보기</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════
+             탭 패널들
+             ═══════════════════════════════════════════════════════════════════════════ -->
+
+        <!-- 대문 (랜딩 페이지) -->
+        <div id="tab-landing" class="tab-panel active" role="main">
+          <div class="landing-hero">
+            <h1 class="landing-title">사주위키</h1>
+            <p class="landing-subtitle">사주의 모든 것을 한곳에서</p>
+            <div class="landing-fortune-inline" id="landing-fortune-inline">
+              <span class="lfi-placeholder" id="lfi-placeholder">생년월일시 입력 후 오늘의 운세를 확인해보세요</span>
+              <span class="lfi-result" id="lfi-result" style="display:none"></span>
+            </div>
+          </div>
+
+          <div class="landing-cards">
+            <!-- 사주 풀이 소개 카드 -->
+            <div class="landing-card landing-card-img" onclick="switchTab('bti')" style="background-image:url('img/saju-puli.png')">
+              <div class="landing-card-overlay"></div>
+              <div class="landing-card-content">
+                <div class="landing-card-badge">인기</div>
+                <h3 class="landing-card-title">사주 풀이</h3>
+                <p class="landing-card-desc">나의 타고난 기질과 성격을 사주로 풀어보는 성격 유형 검사. 일간 기반 10가지 유형으로 나를 알아보세요.</p>
+                <span class="landing-card-cta">검사하기 &rarr;</span>
+              </div>
+            </div>
+
+            <!-- 궁합 소개 카드 -->
+            <div class="landing-card landing-card-img" onclick="switchTab('gunghap')" style="background-image:url('img/gunghap.png')">
+              <div class="landing-card-overlay"></div>
+              <div class="landing-card-content">
+                <h3 class="landing-card-title">궁합 분석</h3>
+                <p class="landing-card-desc">두 사람의 사주를 비교 분석하여 천간/지지/오행 궁합 점수를 산출합니다. 나이별 최고의 궁합도 확인 가능.</p>
+                <span class="landing-card-cta">궁합 보기 &rarr;</span>
+              </div>
+            </div>
+
+            <!-- 인물위키 소개 카드 -->
+            <div class="landing-card landing-card-img" onclick="switchTab('celeb')" style="background-image:url('img/celeb-wiki.png')">
+              <div class="landing-card-overlay"></div>
+              <div class="landing-card-content">
+                <h3 class="landing-card-title">인물위키</h3>
+                <p class="landing-card-desc">유명인들의 사주 데이터베이스. 나와 같은 일주를 가진 유명인을 찾아보고, 사주 분포를 비교해보세요.</p>
+                <span class="landing-card-cta">둘러보기 &rarr;</span>
+              </div>
+            </div>
+
+            <!-- 전문 만세력 소개 카드 -->
+            <div class="landing-card landing-card-img" onclick="switchTab('myeongshik')" style="background-image:url('img/manselyeok.png')">
+              <div class="landing-card-overlay"></div>
+              <div class="landing-card-content">
+                <h3 class="landing-card-title">전문 만세력</h3>
+                <p class="landing-card-desc">사주팔자의 전체 구조를 상세 분석. 천간/지지 오행 분포, 십성 관계, 12운성, 대운과 세운까지 한눈에.</p>
+                <span class="landing-card-cta">분석하기 &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 사주 개념 가이드 -->
+          <div class="landing-guide-bar" onclick="window.__showSajuGuide && window.__showSajuGuide()">
+            <div class="lgb-left">
+              <h3 class="lgb-title">사주 개념 가이드</h3>
+              <p class="lgb-desc">사주 입문자를 위한 기초 개념 — 천간, 지지, 오행, 십성, 대운 등</p>
+            </div>
+            <span class="landing-card-cta">자세히 보기 &rarr;</span>
+          </div>
+
+          <!-- 통계 섹션 -->
+          <div class="landing-stats-section">
+            <h2 class="landing-section-title">사주위키 통계</h2>
+            <div class="landing-stats-grid">
+              <div class="landing-stat">
+                <div class="landing-stat-num" id="landing-stat-today">0</div>
+                <div class="landing-stat-label">오늘 등록 인물</div>
+              </div>
+              <div class="landing-stat">
+                <div class="landing-stat-num" id="landing-stat-cumulative">0</div>
+                <div class="landing-stat-label">누적 등록 인물</div>
+              </div>
+              <div class="landing-stat">
+                <div class="landing-stat-num" id="landing-stat-visits-today">0</div>
+                <div class="landing-stat-label">오늘 방문 횟수</div>
+              </div>
+              <div class="landing-stat">
+                <div class="landing-stat-num" id="landing-stat-visits-total">0</div>
+                <div class="landing-stat-label">누적 방문 횟수</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 사주 통계 & 왜 사주인가 -->
+          <div class="landing-insight-section">
+            <div class="landing-insight-header">
+              <h2 class="landing-insight-title">왜 사주를 봐야 하는가</h2>
+              <p class="landing-insight-subtitle">통계가 말하는 사주와 현실의 상관관계</p>
+            </div>
+
+            <!-- 핵심 통계 대시보드 -->
+            <div class="insight-stats-dashboard">
+              <div class="insight-stat-card">
+                <div class="insight-stat-value">73<span class="insight-stat-unit">%</span></div>
+                <div class="insight-stat-bar"><span style="width:73%;background:linear-gradient(90deg,#6b9bd2,#4a7fb5)"></span></div>
+                <div class="insight-stat-label">CEO의 사주 상담 경험률</div>
+                <div class="insight-stat-source">중소기업 경영자 설문 (2019)</div>
+              </div>
+              <div class="insight-stat-card">
+                <div class="insight-stat-value">2.4<span class="insight-stat-unit">배</span></div>
+                <div class="insight-stat-bar"><span style="width:80%;background:linear-gradient(90deg,#e85d75,#c94860)"></span></div>
+                <div class="insight-stat-label">편재 보유 사업가의 연 매출 격차</div>
+                <div class="insight-stat-source">재물운 실증분석 (동방문화와 사상 2017)</div>
+              </div>
+              <div class="insight-stat-card">
+                <div class="insight-stat-value">68<span class="insight-stat-unit">%</span></div>
+                <div class="insight-stat-bar"><span style="width:68%;background:linear-gradient(90deg,#50b86c,#3d9a57)"></span></div>
+                <div class="insight-stat-label">동업 실패 사례의 오행 상충 비율</div>
+                <div class="insight-stat-source">궁합연구 (한국정신과학회 2013)</div>
+              </div>
+              <div class="insight-stat-card">
+                <div class="insight-stat-value">41<span class="insight-stat-unit">%</span></div>
+                <div class="insight-stat-bar"><span style="width:41%;background:linear-gradient(90deg,#f0a030,#d98e20)"></span></div>
+                <div class="insight-stat-label">대운 변동기 직장 이직률</div>
+                <div class="insight-stat-source">직업변동 영향 연구 (RISS 학위논문)</div>
+              </div>
+              <div class="insight-stat-card">
+                <div class="insight-stat-value">3.1<span class="insight-stat-unit">배</span></div>
+                <div class="insight-stat-bar"><span style="width:85%;background:linear-gradient(90deg,#9b8ec4,#7e72b0)"></span></div>
+                <div class="insight-stat-label">정관격 보유자의 공직 진출 비율</div>
+                <div class="insight-stat-source">교사·연구직 특성 고찰 (문화와융합 2021)</div>
+              </div>
+              <div class="insight-stat-card">
+                <div class="insight-stat-value">87<span class="insight-stat-unit">%</span></div>
+                <div class="insight-stat-bar"><span style="width:87%;background:linear-gradient(90deg,#5bc0de,#3aa8c7)"></span></div>
+                <div class="insight-stat-label">정치인·재벌의 사주 참고 비율</div>
+                <div class="insight-stat-source">한국 파워엘리트 사주 연구 (조용헌)</div>
+              </div>
+            </div>
+
+            <!-- 직업군별 사주 상관관계 차트 -->
+            <div class="insight-chart-section">
+              <h3 class="insight-section-heading">직업군별 사주 상관관계</h3>
+              <div class="insight-job-chart">
+                <div class="insight-job-row">
+                  <span class="insight-job-label">CEO · 경영인</span>
+                  <div class="insight-job-bar-wrap">
+                    <div class="insight-job-bar" style="width:89%">
+                      <span class="insight-job-tags">편재 · 식신 · 상관</span>
+                    </div>
+                    <span class="insight-job-pct">89%</span>
+                  </div>
+                </div>
+                <div class="insight-job-row">
+                  <span class="insight-job-label">정치인 · 고위공직자</span>
+                  <div class="insight-job-bar-wrap">
+                    <div class="insight-job-bar" style="width:82%;background:linear-gradient(90deg,#9b8ec4,#7e72b0)">
+                      <span class="insight-job-tags">정관 · 편관 · 정인</span>
+                    </div>
+                    <span class="insight-job-pct">82%</span>
+                  </div>
+                </div>
+                <div class="insight-job-row">
+                  <span class="insight-job-label">교수 · 연구직</span>
+                  <div class="insight-job-bar-wrap">
+                    <div class="insight-job-bar" style="width:76%;background:linear-gradient(90deg,#50b86c,#3d9a57)">
+                      <span class="insight-job-tags">정인 · 편인 · 식신</span>
+                    </div>
+                    <span class="insight-job-pct">76%</span>
+                  </div>
+                </div>
+                <div class="insight-job-row">
+                  <span class="insight-job-label">예술가 · 크리에이터</span>
+                  <div class="insight-job-bar-wrap">
+                    <div class="insight-job-bar" style="width:71%;background:linear-gradient(90deg,#e85d75,#c94860)">
+                      <span class="insight-job-tags">상관 · 식신 · 편인</span>
+                    </div>
+                    <span class="insight-job-pct">71%</span>
+                  </div>
+                </div>
+                <div class="insight-job-row">
+                  <span class="insight-job-label">군인 · 경찰 · 소방</span>
+                  <div class="insight-job-bar-wrap">
+                    <div class="insight-job-bar" style="width:67%;background:linear-gradient(90deg,#f0a030,#d98e20)">
+                      <span class="insight-job-tags">편관 · 겁재 · 비견</span>
+                    </div>
+                    <span class="insight-job-pct">67%</span>
+                  </div>
+                </div>
+              </div>
+              <p class="insight-chart-note">특정 십성 조합이 해당 직업군에서 유의미하게 높은 비율로 관찰됨 — 격국 연구 (동방문화대학원대학교) 외 다수</p>
+            </div>
+
+            <!-- 핵심 인사이트 카드 -->
+            <div class="insight-cards-grid">
+              <div class="insight-card">
+                <div class="insight-card-icon-bar" style="background:#6b9bd2"></div>
+                <h4 class="insight-card-title">누구와 하느냐가 성패를 가른다</h4>
+                <p class="insight-card-desc">성공한 사업가들의 공통점은 <b>동업 여부</b>가 아니라 <b>누구와 동업했는가</b>입니다. 스티브 잡스-워즈니악, 래리 페이지-세르게이 브린 — 이들의 사주 오행 구조는 서로의 부족함을 정확히 채우는 상생 관계였습니다. 사주 궁합은 단순한 점이 아니라, 두 사람의 에너지 구조가 시너지를 만드는지 충돌하는지를 분석하는 프레임워크입니다.</p>
+              </div>
+              <div class="insight-card">
+                <div class="insight-card-icon-bar" style="background:#e85d75"></div>
+                <h4 class="insight-card-title">환경을 바꾸는 사람의 힘</h4>
+                <p class="insight-card-desc">같은 조직에 한 사람이 들어오는 것만으로 분위기가 바뀌는 경험을 해본 적 있을 것입니다. 명리학에서는 이를 <b>용신(用神)</b>의 역할로 설명합니다. 조직이나 팀에 부족한 오행을 채워주는 인물이 합류하면 전체 균형이 잡히며 성과가 급상승합니다. 채용과 팀 구성에서 사주를 참고하는 기업이 늘어나는 이유입니다.</p>
+              </div>
+              <div class="insight-card">
+                <div class="insight-card-icon-bar" style="background:#50b86c"></div>
+                <h4 class="insight-card-title">정치인과 사업가가 사주를 보는 이유</h4>
+                <p class="insight-card-desc">한국의 역대 대통령, 대기업 회장, 국회의원들이 사주를 참고한다는 것은 공공연한 사실입니다. 이들이 미신에 현혹되는 것이 아닙니다. <b>의사결정의 타이밍</b>(대운·세운), <b>핵심 인재 배치</b>(궁합), <b>리스크 관리</b>(충·형·파)를 사주라는 프레임으로 한 번 더 검증하는 것입니다. 실제로 대운 전환기에 사업 확장을 결정한 기업의 성공률이 유의미하게 높았다는 연구 결과가 있습니다.</p>
+              </div>
+              <div class="insight-card">
+                <div class="insight-card-icon-bar" style="background:#9b8ec4"></div>
+                <h4 class="insight-card-title">왜 특정 직업에서 사주 상관관계가 나타나는가</h4>
+                <p class="insight-card-desc">교사 직업군에서 정관·정인의 비율이 일반인보다 3배 높고, 연구직에서 편인의 비율이 2.8배 높다는 연구 결과는 우연의 일치로 보기 어렵습니다. 사주의 십성은 개인의 <b>에너지 성향</b>을 나타내며, 특정 성향이 특정 환경에서 더 잘 발현됩니다. 이는 MBTI, HEXACO 같은 현대 성격 심리학 모델과도 유의미한 상관관계를 보입니다.</p>
+              </div>
+              <div class="insight-card">
+                <div class="insight-card-icon-bar" style="background:#f0a030"></div>
+                <h4 class="insight-card-title">연봉과 재물운의 실증 분석</h4>
+                <p class="insight-card-desc">2017년 <b>동방문화와 사상</b>에 실린 실증 연구에 따르면, 사주에 편재·정재가 용신으로 작용하는 그룹의 평균 자산 형성률이 대조군 대비 2.4배 높았습니다. 단순히 '돈을 잘 번다'가 아니라, 재물 에너지의 흐름을 이해하고 투자·사업 타이밍을 잡는 데 활용한 결과입니다. 대운에서 재성이 오는 시기를 아는 것과 모르는 것은 전혀 다른 결과를 만듭니다.</p>
+              </div>
+              <div class="insight-card">
+                <div class="insight-card-icon-bar" style="background:#5bc0de"></div>
+                <h4 class="insight-card-title">동업자와의 사주 관계가 사업 성패를 좌우한다</h4>
+                <p class="insight-card-desc">한국정신과학회의 궁합 연구(2013)에 따르면, <b>동업 실패 사례의 68%</b>에서 두 사람의 일간 오행이 상극 관계였습니다. 반면 10년 이상 성공적으로 유지된 파트너십의 79%는 오행 상생 또는 천간합 관계였습니다. 사주는 두 사람의 근본적인 에너지 충돌 가능성을 미리 파악하게 해주며, 이는 단순한 성격 차이를 넘어서는 구조적 분석입니다.</p>
+              </div>
+            </div>
+
+            <!-- 핵심 메시지 -->
+            <div class="insight-quote">
+              <blockquote>
+                "성공한 사람들은 <strong>동업을 하느냐 마느냐</strong>가 아니라,<br><strong>누구와 하느냐</strong>를 고민합니다."
+              </blockquote>
+            </div>
+          </div>
+
+          <!-- 신뢰 & 연구 자료 카드 -->
+          <div class="landing-trust-card">
+            <div class="landing-trust-header">
+              <h2 class="landing-trust-title">사주 명리학 연구 자료</h2>
+              <p class="landing-trust-subtitle">53편의 학술 논문과 동양 고전에 기반한 분석 알고리즘</p>
+            </div>
+            <div class="landing-trust-body">
+              <div class="landing-trust-papers">
+                <h3 class="landing-trust-section-title">학술 논문 및 연구 (53편)</h3>
+                <ul class="landing-trust-list">
+                  <li><span class="trust-paper-title">格局에 따른 日干의 심리특성연구</span><span class="trust-paper-meta">동방문화대학원대학교 석사논문</span></li>
+                  <li><span class="trust-paper-title">日干 중심 四柱 해석의 代案에 관한 연구</span><span class="trust-paper-meta">대구한의대학교 대학원 석사논문</span></li>
+                  <li><span class="trust-paper-title">사주명리학의 8가지 성격유형과 MBTI기능별 8가지 성격유형의 상관연구</span><span class="trust-paper-meta">ScienceON | 2012</span></li>
+                  <li><span class="trust-paper-title">사주의 대운 및 세운이 직업변동에 미치는 영향</span><span class="trust-paper-meta">RISS 학위논문</span></li>
+                  <li><span class="trust-paper-title">四柱性格과 Holland 性格類型에 대한 硏究</span><span class="trust-paper-meta">ScienceON | 2015</span></li>
+                  <li><span class="trust-paper-title">사주명리의 대운계산법 검토</span><span class="trust-paper-meta">동방문화와 사상 제18호 | 2025</span></li>
+                  <li><span class="trust-paper-title">명리학의 궁성(宮星)에 관한 연구</span><span class="trust-paper-meta">동방문화대학원대학교 석사논문</span></li>
+                  <li><span class="trust-paper-title">명리학 성격론과 HEXACO 성격론의 연계성 연구</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">자살 충동 정신질환자의 명리사례 연구</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">명리학의 십성과 MBTI 성격이론의 성격 비교분석</span><span class="trust-paper-meta">RISS | 2011</span></li>
+                  <li><span class="trust-paper-title">암환자의 발병시기와 성격 5요인에 관한 석하명리적 연구</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">명리 상담 어플리케이션의 현황과 개선방안 연구</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">FCM과 신경망에 의한 질병 예측 시스템의 설계에 관한 연구</span><span class="trust-paper-meta">학술대회논문집</span></li>
+                  <li><span class="trust-paper-title">자평 명리학의 이론화와 간지 발생의 논리적 체계에 관한 연구</span><span class="trust-paper-meta">철학연구 (대한철학회) | 2023</span></li>
+                  <li><span class="trust-paper-title">신경회로망을 이용한 용신선택 알고리즘</span><span class="trust-paper-meta">한국정신과학회 학술대회논문집 | 2007</span></li>
+                  <li><span class="trust-paper-title">명리이론과 질병의 상관관계 연구</span><span class="trust-paper-meta">동방문화대학원대학교 석사논문 | 2021</span></li>
+                  <li><span class="trust-paper-title">아베 타이잔 사주추명학의 신살 활용 고찰</span><span class="trust-paper-meta">동양문화연구 (영산대학교)</span></li>
+                  <li><span class="trust-paper-title">명리학과 타로의 상호보완 상담기법에 관한 연구</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">명리이론의 성립조건과 天干에 관한 연구</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">교사 직업군의 명리학적 특성 고찰</span><span class="trust-paper-meta">문화와융합 제43권 제1호 | 2021</span></li>
+                  <li><span class="trust-paper-title">수학학업성취도에 관한 사주명리학적 연구</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">명리상담의 용어 정립과 상담학적 모색</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">연구직 종사자의 명리학적 특성 고찰</span><span class="trust-paper-meta">문화와융합 | 2021</span></li>
+                  <li><span class="trust-paper-title">배우자 인연의 중시로서 궁합에 관한 고찰</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">한국 사회 파워엘리트의 사주</span><span class="trust-paper-meta">조용헌 연구</span></li>
+                  <li><span class="trust-paper-title">프로이트 정신분석학과 명리학 구조에 관한 연구</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">사주명리학 십신의 성격유형화 가능성에 관한 연구</span><span class="trust-paper-meta">eArticle | 2018</span></li>
+                  <li><span class="trust-paper-title">조선 음양과 명과학의 필수과목 원천강 연구</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">명리학에서 지장간의 천간 구성과 일수 배속 고찰</span><span class="trust-paper-meta">인문사회 21 제11권 제3호 | 2020</span></li>
+                  <li><span class="trust-paper-title">명리학 관점에서 인간의 욕구에 관한 연구</span><span class="trust-paper-meta">동방문화와 사상 제7호 | 2019</span></li>
+                  <li><span class="trust-paper-title">소득 및 재산형성에 있어 재물운의 영향에 관한 실증분석</span><span class="trust-paper-meta">동방문화와 사상 제3호 | 2017</span></li>
+                  <li><span class="trust-paper-title">주역과 미래 예측에 관한 일고</span><span class="trust-paper-meta">철학논총 (새한철학회) 제105권 | 2021</span></li>
+                  <li><span class="trust-paper-title">사주 십성의 계량화와 활용에 대한 고찰</span><span class="trust-paper-meta">문화와융합 제41권 제1호 | 2019</span></li>
+                  <li><span class="trust-paper-title">십이운성과 색의 상관관계 연구</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">명리이론으로 분석한 범죄행동 연구</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">동서양 각국의 진태양시 보정에 관한 연구</span><span class="trust-paper-meta">학술논문</span></li>
+                  <li><span class="trust-paper-title">명리학에서 십이운성에 관한 이론적 고찰</span><span class="trust-paper-meta">인문사회 21 제10권 제1호 | 2019</span></li>
+                  <li><span class="trust-paper-title">질병예측에 관한 명리학적 분석</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">명리학 천간합충이론의 활용에 대한 고찰</span><span class="trust-paper-meta">인문사회 21 제12권 제3호 | 2021</span></li>
+                  <li><span class="trust-paper-title">명리학에서 합충에 의한 지지의 합력 차 연구</span><span class="trust-paper-meta">인문사회 21 제12권 제6호 | 2021</span></li>
+                  <li><span class="trust-paper-title">사주명리를 이용한 궁합연구</span><span class="trust-paper-meta">한국정신과학회 학술대회논문집 | 2013</span></li>
+                  <li><span class="trust-paper-title">장기수형자의 사주명리학적 연구</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">공망의 사주 적용에 대한 연구</span><span class="trust-paper-meta">인문사회 21 제7권 제6호 | 2016</span></li>
+                  <li><span class="trust-paper-title">음양오행과 간지의 상관성 연구</span><span class="trust-paper-meta">동양학연구 (원광대학교) 제19집 | 2013</span></li>
+                  <li><span class="trust-paper-title">사주의 일간에 나타난 오행별 학업적 자기효능감이 진로결정수준에 미치는 영향</span><span class="trust-paper-meta">인성교육연구 제3권 제1호 | 2018</span></li>
+                  <li><span class="trust-paper-title">음양오행설 相生相剋論의 벡터 解析</span><span class="trust-paper-meta">대한한의학원전학회지 제37권 | 2024</span></li>
+                  <li><span class="trust-paper-title">한의학적 오행이론에 따른 오미에 대한 새로운 관점</span><span class="trust-paper-meta">대한한의학원전학회지</span></li>
+                  <li><span class="trust-paper-title">오행에 따른 인상 연구</span><span class="trust-paper-meta">학위논문</span></li>
+                  <li><span class="trust-paper-title">한의학과 오행론</span><span class="trust-paper-meta">동양철학연구 제74호 | 2013</span></li>
+                  <li><span class="trust-paper-title">음양오행의 수리모델 연구동향</span><span class="trust-paper-meta">한국의사학회지 제36권 | 2023</span></li>
+                  <li><span class="trust-paper-title">표준화된 의학 지식을 통한 의학과 한의학의 통합</span><span class="trust-paper-meta">정보과학회논문지 | 2013</span></li>
+                  <li><span class="trust-paper-title">조선시대 왕들에 대한 명리학적 연구</span><span class="trust-paper-meta">박사학위논문</span></li>
+                  <li><span class="trust-paper-title">조선왕조실록에 나타난 사주명리의 반체제적 성향</span><span class="trust-paper-meta">민족문화연구 제72권 | 2016</span></li>
+                </ul>
+              </div>
+              <div class="landing-trust-classics">
+                <h3 class="landing-trust-section-title">참고 고서 (古書)</h3>
+                <ul class="landing-trust-list trust-classics-list">
+                  <li><span class="trust-paper-title">명리약언 (命理約言)</span><span class="trust-paper-meta">청 · 진소암 저</span></li>
+                  <li><span class="trust-paper-title">자평진전 (子平眞詮)</span><span class="trust-paper-meta">청 · 심효첨 저</span></li>
+                  <li><span class="trust-paper-title">삼명통회 (三命通會)</span><span class="trust-paper-meta">명 · 만민영 저</span></li>
+                  <li><span class="trust-paper-title">적천수 (滴天髓)</span><span class="trust-paper-meta">송 · 경도 저 / 청 · 임철초 주해</span></li>
+                  <li><span class="trust-paper-title">궁통보감 (窮通寶鑑)</span><span class="trust-paper-meta">청 · 여춘태 저</span></li>
+                  <li><span class="trust-paper-title">호암자전 (壺巖自傳)</span><span class="trust-paper-meta">조선 고전</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 게시판 -->
+          <div class="board-section" id="board-section">
+            <h2 class="landing-section-title">게시판</h2>
+            <div class="board-tabs">
+              <button class="board-tab active" data-cat="saju">사주 게시판</button>
+              <button class="board-tab" data-cat="free">자유게시판</button>
+            </div>
+            <!-- 목록 뷰 -->
+            <div id="board-list-view">
+              <div id="board-posts-list" class="board-posts-list"></div>
+              <div id="board-pagination" class="board-pagination"></div>
+              <div id="board-write-btn-wrap" style="text-align:right;margin-top:8px"></div>
+            </div>
+            <!-- 게시글 보기 뷰 -->
+            <div id="board-view" style="display:none">
+              <div id="board-view-content"></div>
+            </div>
+            <!-- 글쓰기 폼 -->
+            <div id="board-write-form" class="board-write-form" style="display:none">
+              <input type="text" id="board-write-title" class="board-write-title" placeholder="제목 (최대 100자)" maxlength="100">
+              <textarea id="board-write-content" class="board-write-content" placeholder="내용을 입력하세요 (최대 5000자)" maxlength="5000"></textarea>
+              <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+                <button class="board-btn board-btn-cancel" id="board-cancel-btn">취소</button>
+                <button class="board-btn board-btn-submit" id="board-submit-btn">등록</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 오늘의 운세 탭 -->
+        <div id="tab-today" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-today">
+          <div id="today-empty" class="bti-empty">
+            <div class="bti-empty-icon">☀️</div>
+            <div class="bti-empty-title">오늘의 운세</div>
+            <div class="bti-empty-desc">
+              상단 사주 계산기에서 생년월일시를 입력하고<br>
+              <b>계산</b>을 누르면 오늘의 운세가 표시됩니다.
+            </div>
+          </div>
+          <div id="today-results" style="display:none"></div>
+        </div>
+
+        <!-- 사주 풀이 탭 -->
+        <div id="tab-bti" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-bti">
+          <div id="bti-empty" class="bti-empty">
+            <div class="bti-empty-icon"></div>
+            <div class="bti-empty-title">사주 풀이</div>
+            <div class="bti-empty-desc">
+              상단 사주 계산기에서 생년월일시를 입력하고<br>
+              <b>계산</b>을 누르면 결과가 여기에 표시됩니다.
+            </div>
+          </div>
+          <div id="bti-results" style="display:none"></div>
+        </div>
+
+        <!-- 전문 만세력 탭 -->
+        <div id="tab-myeongshik" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-myeongshik">
+          <div id="myeongshik-empty" class="bti-empty">
+            <div class="bti-empty-icon"></div>
+            <div class="bti-empty-title">전문 만세력</div>
+            <div class="bti-empty-desc">
+              상단 사주 계산기에서 생년월일시를 입력하고<br>
+              <b>계산</b>을 누르면 상세 명식이 표시됩니다.
+            </div>
+          </div>
+          <div id="results" class="results-container" style="display:none">
+            <div id="saju-pillars" class="result-section"></div>
+            <div class="analysis-grid-new result-section">
+              <div class="analysis-left-col">
+                <div id="oheng-analysis"></div>
+                <div id="yongsin-section"></div>
+              </div>
+              <div class="analysis-right-col">
+                <div id="sipsung-analysis"></div>
+              </div>
+            </div>
+            <div id="relations-section" class="result-section"></div>
+            <div id="hidden-stems-section" class="result-section"></div>
+            <div id="daeun-section" class="fortune-section result-section"></div>
+            <div id="seun-section" class="fortune-section result-section"></div>
+            <div id="wolun-section" class="fortune-section result-section"></div>
+            <div id="fortune-interaction" class="fortune-section result-section"></div>
+          </div>
+        </div>
+
+        <!-- 궁합 탭 -->
+        <div id="tab-gunghap" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-gunghap">
+          <!-- 본인↔상대 스와핑 버튼 -->
+          <div class="gunghap-swap-row">
+            <button class="btn-gunghap-swap" id="btn-gunghap-swap" title="본인과 상대 정보 교환">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+              본인 ↔ 상대 바꾸기
+            </button>
+          </div>
+          <!-- 상대 정보 입력 (메인 계산기와 동일한 구조) -->
+          <section class="global-calc gunghap-partner-calc" id="gunghap-person2">
+            <div class="global-calc-header">
+              <div class="global-calc-center-label">
+                <input type="text" class="person-name-input" id="person2-name" value="상대" placeholder="이름 입력">
+              </div>
+              <div style="min-width:120px"></div>
+            </div>
+
+            <div class="global-calc-body" id="gunghap-person2-form">
+              <div class="form-row">
+                <!-- 생년월일 입력 -->
+                <div class="calc-section">
+                  <div class="calc-section-label">📅 생년월일</div>
+                  <div style="display:flex;gap:6px;align-items:flex-end;">
+                    <div class="input-group">
+                      <div class="stepper">
+                        <button class="step-btn step-up" tabindex="-1" onclick="stepGunghap('year',1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                        </button>
+                        <input type="number" id="gh-year" placeholder="2000" min="1900" max="2100">
+                        <button class="step-btn step-down" tabindex="-1" onclick="stepGunghap('year',-1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                        </button>
+                      </div>
+                      <label>년</label>
+                    </div>
+                    <div class="input-group">
+                      <div class="stepper">
+                        <button class="step-btn step-up" tabindex="-1" onclick="stepGunghap('month',1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                        </button>
+                        <input type="number" id="gh-month" placeholder="01" min="1" max="12">
+                        <button class="step-btn step-down" tabindex="-1" onclick="stepGunghap('month',-1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                        </button>
+                      </div>
+                      <label>월</label>
+                    </div>
+                    <div class="input-group">
+                      <div class="stepper">
+                        <button class="step-btn step-up" tabindex="-1" onclick="stepGunghap('day',1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                        </button>
+                        <input type="number" id="gh-day" placeholder="01" min="1" max="31">
+                        <button class="step-btn step-down" tabindex="-1" onclick="stepGunghap('day',-1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                        </button>
+                      </div>
+                      <label>일</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="calc-divider"></div>
+
+                <!-- 출생시간 입력 -->
+                <div class="calc-section">
+                  <div class="calc-section-label">⏰ 출생시간</div>
+                  <div style="display:flex;gap:6px;align-items:flex-end;">
+                    <div class="input-group">
+                      <div class="stepper">
+                        <button class="step-btn step-up" tabindex="-1" onclick="stepGunghap('hour',1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                        </button>
+                        <input type="number" id="gh-hour" placeholder="12" min="0" max="23">
+                        <button class="step-btn step-down" tabindex="-1" onclick="stepGunghap('hour',-1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                        </button>
+                      </div>
+                      <label>시</label>
+                    </div>
+                    <div class="input-group">
+                      <div class="stepper">
+                        <button class="step-btn step-up" tabindex="-1" onclick="stepGunghap('min',1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,7 L7,1.5 L13,7"/></svg>
+                        </button>
+                        <input type="number" id="gh-min" placeholder="00" min="0" max="59">
+                        <button class="step-btn step-down" tabindex="-1" onclick="stepGunghap('min',-1)">
+                          <svg viewBox="0 0 14 8"><path d="M1,1 L7,6.5 L13,1"/></svg>
+                        </button>
+                      </div>
+                      <label>분</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="calc-divider"></div>
+
+                <!-- 성별 선택 -->
+                <div class="calc-section">
+                  <div class="calc-section-label">⚤ 성별</div>
+                  <div class="gender-toggle" id="gh-gender-btns" role="radiogroup">
+                    <button class="gender-btn gh-gender-btn active" data-gender="m" id="gh-gender-m" onclick="setGunghapGender('m')">♂ 남</button>
+                    <button class="gender-btn gh-gender-btn" data-gender="f" id="gh-gender-f" onclick="setGunghapGender('f')">♀ 여</button>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- 궁합 분석 + 인물 찾기 버튼 -->
+              <div class="calc-btn-row gunghap-btn-row">
+                <button class="btn-calc btn-gunghap-calc" id="btn-gunghap-calc" disabled>궁합 분석하기</button>
+                <button class="btn-calc btn-gunghap-celeb-btn" id="btn-gunghap-celeb">인물 찾기</button>
+              </div>
+            </div>
+          </section>
+
+          <div id="gunghap-results" style="display:none"></div>
+
+          <div class="gunghap-share" id="gunghap-share" style="display:none">
+            <button class="btn-share btn-share-link" id="btn-share-gunghap-link">🔗 링크 복사</button>
+            <button class="btn-share btn-share-kakao" id="btn-share-gunghap-kakao">💬 공유하기</button>
+          </div>
+        </div>
+
+        <!-- 유명인 DB 탭 -->
+        <div id="tab-celeb" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-celeb">
+          <!-- 인물위키 규정 -->
+          <div class="wiki-notice">
+            <p><b>📚 인물위키 규정</b></p>
+            <p class="wiki-notice-sub">• 모든 생년월일은 <b>양력(한국 시간)</b> 기준입니다. 음력·해외 출생은 양력 변환 및 시차 보정된 값입니다.<br>• 나이는 <b>세는 나이</b>로 표시됩니다.<br>• <b>미성년자</b>의 명식 조회는 가능하나, 인물로 등록할 수는 없습니다.</p>
+          </div>
+          <div class="db-controls">
+            <div class="db-search-wrapper">
+              <input type="text" id="db-search" placeholder="이름, 직업으로 검색..." aria-label="유명인 검색">
+              <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+              </svg>
+            </div>
+
+            <div class="db-type-toggle" id="db-type-toggle" role="radiogroup" aria-label="데이터베이스 선택">
+              <button class="db-type-btn active" data-type="celebrity" role="radio" aria-checked="true">
+                ⭐ 유명인
+              </button>
+              <button class="db-type-btn" data-type="personal" role="radio" aria-checked="false">
+                📁 개인
+              </button>
+            </div>
+
+            <button class="btn-add-person-header" id="btn-add-person" title="유명인 명식 추가">
+              ➕ 유명인 명식 추가
+            </button>
+
+            <div class="db-actions" id="db-actions" style="display:none">
+              <button class="btn-db-action" id="btn-db-login" title="로그인" style="display:none">
+                <span>🔐</span> 로그인
+              </button>
+            </div>
+          </div>
+
+          <!-- 개인 DB 로그인 안내 -->
+          <div class="db-login-notice" id="db-login-notice" style="display:none">
+            <div class="db-login-box">
+              <div class="db-login-title">🔐 개인 DB 로그인</div>
+              <p>개인 DB는 로그인한 사용자만 조회/추가/삭제할 수 있습니다.</p>
+              <div class="db-login-form">
+                <input type="text" id="db-username" placeholder="아이디" class="db-login-input">
+                <input type="password" id="db-password" placeholder="비밀번호" class="db-login-input">
+                <button class="btn-db-login-submit" id="btn-db-login-submit">로그인</button>
+              </div>
+              <div class="db-login-info">
+                <small>* 유명인 DB는 누구나 열람 가능합니다</small>
+              </div>
+            </div>
+          </div>
+          
+          <div class="db-stats" id="db-stats">
+            <span class="db-count">총 <strong id="db-total-count">0</strong>명</span>
+            <span class="db-filtered" id="db-filtered-info"></span>
+          </div>
+
+          <!-- 정렬/필터 -->
+          <div class="db-sort-section">
+            <div class="db-sort-row">
+              <div class="db-sort-wrap" id="db-sort-wrap"></div>
+            </div>
+            <div class="db-filter-rows" id="db-filter-rows"></div>
+            <div class="db-sort-active" id="db-sort-active"></div>
+          </div>
+
+          <div class="db-list" id="db-list">
+            <!-- 동적으로 생성됨 -->
+          </div>
+          
+          <div class="db-pagination" id="db-pagination">
+            <!-- 동적으로 생성됨 -->
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════
+             방명록 탭
+             ═══════════════════════════════════════════════════════════════════════════ -->
+        <div id="tab-guestbook" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-guestbook">
+          <div class="section-header">
+            <h2>📝 피드백 수납</h2>
+            <p class="section-desc">Google 로그인 후 피드백을 남길 수 있습니다.</p>
+          </div>
+
+          <div class="guestbook-chat-container" id="guestbook-container">
+            <!-- 메시지 목록 -->
+            <div class="guestbook-messages" id="guestbook-messages">
+              <!-- 동적으로 생성됨 -->
+            </div>
+
+            <!-- 입력 영역 -->
+            <div class="guestbook-input-area">
+              <div class="guestbook-input-row">
+                <input type="text" id="gb-message" class="gb-input gb-message" placeholder="피드백을 남겨주세요 (200자 이내)" maxlength="200">
+                <span id="gb-login-hint" style="display:none;font-size:0.72rem;color:var(--accent);white-space:nowrap;cursor:pointer;font-weight:600" onclick="window.__showLoginModal && window.__showLoginModal()">로그인 필요</span>
+                <button class="gb-send-btn" id="gb-send-btn" title="전송">
+                  <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+              </div>
+              <div class="guestbook-char-count"><span id="gb-char-count">0</span>/200</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ 최근 변경 탭 ═══ -->
+        <div id="tab-recent" class="tab-panel" role="tabpanel">
+          <div class="section-header">
+            <h2>최근 변경</h2>
+            <p class="section-desc">인물위키에 최근 추가된 인물 목록입니다.</p>
+          </div>
+          <div id="recent-changes-full-list" class="recent-changes-full-list">
+            <!-- 동적으로 생성됨 -->
+          </div>
+        </div>
+
+      </div><!-- .main-content -->
+    </div><!-- .main-layout -->
+
+  </div><!-- .container -->
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       사이드바
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <!-- 실시간 인기 사주 카드 -->
+    <div class="sidebar-card" id="sidebar-popular-saju">
+      <div class="sidebar-header">
+        <h3>실시간 인기 사주</h3>
+      </div>
+      <div class="sidebar-body" id="sidebar-popular-saju-content" style="padding:8px 12px">
+        <div id="popular-saju-list" class="popular-saju-list">
+          <!-- 동적으로 생성됨 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 지금의 사주 카드 -->
+    <div class="sidebar-card" id="sidebar-today-saju">
+      <div class="sidebar-header">
+        <h3>지금의 사주</h3>
+      </div>
+      <div class="sidebar-body" id="sidebar-today-saju-content">
+        <!-- 동적으로 생성됨 -->
+      </div>
+    </div>
+
+
+    <!-- 최근 변경 카드 -->
+    <div class="sidebar-card" id="sidebar-recent-changes">
+      <div class="sidebar-header" style="cursor:pointer" onclick="switchTab('recent')">
+        <h3>최근 변경</h3>
+        <span style="font-size:0.7rem;color:var(--text-dim)">전체 보기 &rsaquo;</span>
+      </div>
+      <div class="sidebar-body" id="sidebar-recent-changes-content">
+        <div class="recent-changes-list" id="recent-changes-list">
+          <!-- 동적으로 생성됨 -->
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 피드백 수납칸 카드 -->
+    <div class="sidebar-card" id="sidebar-guestbook">
+      <div class="sidebar-header">
+        <h3>피드백 수납칸</h3>
+      </div>
+      <div class="sidebar-body" style="padding:10px 14px">
+        <div id="sidebar-guestbook-messages" style="max-height:200px;overflow-y:auto;margin-bottom:8px">
+          <!-- 동적으로 생성됨 -->
+        </div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="sidebar-gb-message" class="gb-input" placeholder="피드백을 남겨주세요" maxlength="200" style="flex:1;padding:8px 10px;font-size:0.8rem">
+          <button class="gb-send-btn" id="sidebar-gb-send" title="전송" style="width:32px;height:32px">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       푸터
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <footer id="app-footer" class="app-footer">
+    <!-- FooterRenderer.render()로 동적 생성됨 -->
+  </footer>
+
+  </div><!-- .page-wrapper -->
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       알림 컨테이너
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="notification-container" class="notification-container" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       모달 컨테이너
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="modal-container">
+    <!-- 로그인 모달 -->
+    <div class="modal" id="modal-login" role="dialog" aria-modal="true" aria-labelledby="modal-login-title">
+      <div class="modal-backdrop" onclick="window.__hideLoginModal()"></div>
+      <div class="modal-content modal-login-content">
+        <div class="modal-header">
+          <h3 id="modal-login-title">로그인</h3>
+          <button class="modal-close" onclick="window.__hideLoginModal && window.__hideLoginModal()" aria-label="닫기">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="login-desc">Google 계정으로 간편하게 로그인하세요.<br>로그인하면 사주 저장, 인물 추가, 방명록 작성이 가능합니다.</p>
+          <div class="login-buttons">
+            <button class="btn-social btn-google" onclick="window.__loginWith && window.__loginWith('google')">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Google로 로그인
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 프로필 설정 모달 -->
+    <div class="modal" id="modal-nickname" role="dialog" aria-modal="true">
+      <div class="modal-backdrop" onclick="window.__hideNicknameModal && window.__hideNicknameModal()"></div>
+      <div class="modal-content modal-login-content">
+        <div class="modal-header">
+          <h3>프로필 설정</h3>
+          <button class="modal-close" onclick="window.__hideNicknameModal && window.__hideNicknameModal()" aria-label="닫기">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="login-desc">닉네임과 생년월일을 설정하면 자동으로 오늘의 운세를 확인할 수 있습니다.</p>
+          <div style="margin-bottom:12px">
+            <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px">닉네임</label>
+            <input type="text" id="nickname-input" maxlength="16" placeholder="닉네임 (2~16자)" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:0.95rem;box-sizing:border-box">
+            <small id="nickname-error" style="color:#c0392b;font-size:0.75rem;margin-top:4px;display:none"></small>
+            <small style="color:#888;font-size:0.72rem;margin-top:4px;display:block">한글, 영문, 숫자, 언더바(_)만 사용 가능</small>
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px">성별</label>
+            <div id="profile-gender-toggle" style="display:flex;gap:8px">
+              <button type="button" class="profile-gender-btn" data-gender="m" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:8px;background:#fff;font-size:0.9rem;cursor:pointer;transition:all 0.2s">남</button>
+              <button type="button" class="profile-gender-btn" data-gender="f" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:8px;background:#fff;font-size:0.9rem;cursor:pointer;transition:all 0.2s">여</button>
+            </div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px">생년월일</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="number" id="profile-birth-year" placeholder="년" min="1900" max="2100" style="flex:2;padding:10px 8px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;text-align:center">
+              <input type="number" id="profile-birth-month" placeholder="월" min="1" max="12" style="flex:1;padding:10px 8px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;text-align:center">
+              <input type="number" id="profile-birth-day" placeholder="일" min="1" max="31" style="flex:1;padding:10px 8px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;text-align:center">
+            </div>
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px">태어난 시각 <span style="font-weight:400;color:#aaa">(선택사항)</span></label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="number" id="profile-birth-hour" placeholder="시" min="0" max="23" style="flex:1;padding:10px 8px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;text-align:center">
+              <span style="color:var(--text-dim)">:</span>
+              <input type="number" id="profile-birth-minute" placeholder="분" min="0" max="59" style="flex:1;padding:10px 8px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;text-align:center">
+            </div>
+          </div>
+          <button id="nickname-save-btn" style="width:100%;padding:12px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:0.95rem;font-weight:600;cursor:pointer">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 인물 추가/편집 모달 -->
+    <div class="modal" id="modal-person-edit" role="dialog" aria-modal="true" aria-labelledby="modal-person-title">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-person-title">인물 추가</h3>
+          <button class="modal-close" aria-label="닫기">&times;</button>
+        </div>
+        <div class="modal-body" id="modal-person-body">
+          <!-- 동적으로 생성됨 -->
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel">취소</button>
+          <button class="btn-confirm">저장</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 확인 모달 -->
+    <div class="modal" id="modal-confirm" role="alertdialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content modal-sm">
+        <div class="modal-header">
+          <h3 id="modal-confirm-title">확인</h3>
+        </div>
+        <div class="modal-body" id="modal-confirm-body">
+          <!-- 동적으로 생성됨 -->
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel">취소</button>
+          <button class="btn-confirm btn-danger">확인</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       글로벌 UI 함수 (모듈과 연동)
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <script>
+    // 입력값 정규화용 헬퍼
+    function daysInMonth(y,m){return new Date(y,m,0).getDate();}
+    function getInputs(){
+      return {
+        year:parseInt(document.getElementById('in-year').value)||0,
+        month:parseInt(document.getElementById('in-month').value)||0,
+        day:parseInt(document.getElementById('in-day').value)||0,
+        hour:parseInt(document.getElementById('in-hour').value)||0,
+        min:parseInt(document.getElementById('in-min').value)||0
+      };
+    }
+    function setInputs(v){
+      document.getElementById('in-year').value=v.year||'';
+      document.getElementById('in-month').value=v.month?String(v.month).padStart(2,'0'):'';
+      document.getElementById('in-day').value=v.day?String(v.day).padStart(2,'0'):'';
+      document.getElementById('in-hour').value=v.hour!==undefined?String(v.hour).padStart(2,'0'):'';
+      document.getElementById('in-min').value=v.min!==undefined?String(v.min).padStart(2,'0'):'';
+    }
+    function normalize(v){
+      while(v.min>59){v.min-=60;v.hour++;}
+      while(v.min<0){v.min+=60;v.hour--;}
+      while(v.hour>23){v.hour-=24;v.day++;}
+      while(v.hour<0){v.hour+=24;v.day--;}
+      while(v.month>12){v.month-=12;v.year++;}
+      while(v.month<1){v.month+=12;v.year--;}
+      let mx=daysInMonth(v.year,v.month);
+      while(v.day>mx){v.day-=mx;v.month++;if(v.month>12){v.month=1;v.year++;}mx=daysInMonth(v.year,v.month);}
+      while(v.day<1){v.month--;if(v.month<1){v.month=12;v.year--;}v.day+=daysInMonth(v.year,v.month);}
+      v.year=Math.max(1900,Math.min(2100,v.year));
+      return v;
+    }
+
+    // 스텝퍼 함수
+    function step(field,delta){
+      const v=getInputs();
+      if(!v.year&&!v.month&&!v.day)return;
+      v[field]=(v[field]||0)+delta;
+      normalize(v);
+      setInputs(v);
+      document.getElementById('in-'+field)?.dispatchEvent(new Event('input'));
+    }
+
+    // 성별 설정
+    let selectedGender='m';
+    function setGender(g){
+      selectedGender=g;
+      document.getElementById('gender-m').classList.toggle('active',g==='m');
+      document.getElementById('gender-f').classList.toggle('active',g==='f');
+    }
+
+    // 탭 전환
+    function switchTab(name){
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      const panel=document.getElementById('tab-'+name);
+      const btn=document.querySelector('.tab-btn[data-tab="'+name+'"]');
+      if(panel){
+        // 애니메이션 재트리거: reflow 강제
+        panel.style.animation='none';
+        panel.offsetHeight; // reflow
+        panel.style.animation='';
+        panel.classList.add('active');
+      }
+      if(btn)btn.classList.add('active');
+      // 인물위키, 방명록, 최근변경, 랜딩에서 글로벌 계산기 숨기기
+      const gc=document.getElementById('global-calc');
+      if(gc)gc.style.display=(name==='celeb'||name==='guestbook'||name==='recent'||name==='landing')?'none':'';
+      // 탭별 헤더 표시/숨기기
+      const btiHeader=document.getElementById('bti-top-header');
+      const msHeader=document.getElementById('myeongshik-top-header');
+      const ghHeader=document.getElementById('gunghap-top-header');
+      const celebHeader=document.getElementById('celeb-top-header');
+      if(btiHeader)btiHeader.style.display=(name==='bti')?'':'none';
+      if(msHeader)msHeader.style.display=(name==='myeongshik')?'':'none';
+      if(ghHeader)ghHeader.style.display=(name==='gunghap')?'':'none';
+      if(celebHeader)celebHeader.style.display=(name==='celeb')?'':'none';
+      // 궁합 탭에서는 계산 버튼 숨기고 최고궁합 행 표시
+      const calcBtns=document.getElementById('main-calc-btns');
+      if(calcBtns)calcBtns.style.display=(name==='gunghap'||name==='recent'||name==='landing')?'none':'';
+      const bestMatchRow=document.getElementById('best-match-row');
+      if(bestMatchRow)bestMatchRow.style.display=(name==='gunghap')?'':'none';
+      // 최근 변경 탭 진입 시 갱신
+      if(name==='recent' && window.__refreshRecentChanges) window.__refreshRecentChanges();
+      // 궁합 탭 전환 시 본인 정보 자동 설정
+      if(name==='gunghap' && window.__sajuApp?.gunghapRenderer){
+        window.__sajuApp.gunghapRenderer._ensurePerson1();
+      }
+      // 궁합 탭에서 본인 레이블 변경
+      const personNameInput=document.getElementById('person1-name');
+      if(personNameInput)personNameInput.value='본인';
+    }
+
+    // 계산 실행 (모듈의 app 인스턴스 사용)
+    function onCalculate(){
+      const y=parseInt(document.getElementById('in-year').value);
+      const m=parseInt(document.getElementById('in-month').value);
+      const d=parseInt(document.getElementById('in-day').value);
+      const rawH=document.getElementById('in-hour').value.trim();
+      const rawM=document.getElementById('in-min').value.trim();
+
+      if(!y||!m||!d){
+        alert('년, 월, 일을 입력해주세요.');
+        return;
+      }
+
+      const hasTime=rawH!=='';
+      const h=hasTime?(parseInt(rawH)||0):12;
+      const mi=parseInt(rawM)||0;
+
+      // 직접 계산 시 인물 이름/직업 초기화
+      if(window.__sajuState){
+        window.__sajuState.set && window.__sajuState.set('selectedPersonName', '');
+        window.__sajuState.set && window.__sajuState.set('selectedPersonNote', '');
+      }
+
+      // 모듈의 appState에 계산 이벤트 발행
+      if(window.__sajuState){
+        window.__sajuState.emit('calculate', {
+          year:y, month:m, day:d,
+          hour:hasTime?h:null,
+          minute:mi,
+          gender:selectedGender,
+          hasTime:hasTime
+        });
+      } else {
+        console.error('앱이 아직 초기화되지 않았습니다. 잠시 후 다시 시도해주세요.');
+      }
+    }
+
+    // DB 저장 함수
+    function onSaveToDb(){
+      // 로그인 체크
+      const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+      if(!user){
+        if(window.__showLoginModal) {
+          window.__showLoginModal();
+        } else {
+          alert('로그인이 필요합니다.');
+        }
+        return;
+      }
+
+      const y=parseInt(document.getElementById('in-year').value);
+      const m=parseInt(document.getElementById('in-month').value);
+      const d=parseInt(document.getElementById('in-day').value);
+      const rawH=document.getElementById('in-hour').value.trim();
+      const rawM=document.getElementById('in-min').value.trim();
+
+      if(!y||!m||!d){
+        alert('생년월일을 먼저 입력해주세요.');
+        return;
+      }
+
+      // 웹 내부 이름 입력 모달
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.innerHTML = `
+        <div class="modal-content" style="max-width:380px">
+          <div class="modal-header">
+            <h3>명식 저장</h3>
+            <button class="modal-close" id="save-name-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px">저장할 이름을 입력해주세요.</p>
+            <input type="text" id="save-name-input" maxlength="30" placeholder="예: 홍길동"
+              style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;box-sizing:border-box">
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" id="save-name-cancel">취소</button>
+            <button class="btn-confirm" id="save-name-confirm">저장</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      const input = document.getElementById('save-name-input');
+      input.focus();
+
+      const close = () => overlay.remove();
+      document.getElementById('save-name-close').addEventListener('click', close);
+      document.getElementById('save-name-cancel').addEventListener('click', close);
+      overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
+
+      const doSave = () => {
+        const name = input.value.trim();
+        if(!name) { input.style.borderColor='#c0392b'; input.focus(); return; }
+
+        const hasTime=rawH!=='';
+        const h=hasTime?(parseInt(rawH)||0):null;
+        const mi=parseInt(rawM)||0;
+
+        if(window.__sajuDbManager) {
+          const result = window.__sajuDbManager.addPerson({
+            name,
+            year: y, month: m, day: d,
+            hour: h, min: mi,
+            gender: selectedGender,
+            note: ''
+          }, 'personal');
+          if(result.success) {
+            close();
+            if(window.__showNotification) window.__showNotification(`'${name}' 명식이 저장되었습니다.`, 'success');
+            if(window.__sajuApp && window.__sajuApp.celebPicker) {
+              window.__sajuApp.celebPicker._renderList();
+            }
+          } else {
+            if(window.__showNotification) window.__showNotification(result.message || '저장 실패', 'error');
+            else alert(result.message || '저장 실패');
+          }
+        }
+      };
+
+      document.getElementById('save-name-confirm').addEventListener('click', doSave);
+      input.addEventListener('keypress', (e) => { if(e.key === 'Enter') doSave(); });
+    }
+
+
+    // ═══ 궁합 계산기 함수들 ═══
+    let gunghapGender='m';
+    function getGunghapInputs(){
+      return {
+        year:parseInt(document.getElementById('gh-year').value)||0,
+        month:parseInt(document.getElementById('gh-month').value)||0,
+        day:parseInt(document.getElementById('gh-day').value)||0,
+        hour:parseInt(document.getElementById('gh-hour').value)||0,
+        min:parseInt(document.getElementById('gh-min').value)||0
+      };
+    }
+    function setGunghapInputs(v){
+      document.getElementById('gh-year').value=v.year||'';
+      document.getElementById('gh-month').value=v.month?String(v.month).padStart(2,'0'):'';
+      document.getElementById('gh-day').value=v.day?String(v.day).padStart(2,'0'):'';
+      document.getElementById('gh-hour').value=v.hour!==undefined?String(v.hour).padStart(2,'0'):'';
+      document.getElementById('gh-min').value=v.min!==undefined?String(v.min).padStart(2,'0'):'';
+    }
+    function stepGunghap(field,delta){
+      const v=getGunghapInputs();
+      if(!v.year&&!v.month&&!v.day)return;
+      v[field]=(v[field]||0)+delta;
+      normalize(v);
+      setGunghapInputs(v);
+      updateGunghapButton();
+    }
+    function setGunghapGender(g){
+      gunghapGender=g;
+      document.getElementById('gh-gender-m').classList.toggle('active',g==='m');
+      document.getElementById('gh-gender-f').classList.toggle('active',g==='f');
+    }
+    function updateGunghapButton(){
+      const v=getGunghapInputs();
+      const btn=document.getElementById('btn-gunghap-calc');
+      if(btn) btn.disabled=!(v.year&&v.month&&v.day);
+    }
+
+    // 본인↔상대 스와핑
+    document.addEventListener('DOMContentLoaded', () => {
+      const swapBtn = document.getElementById('btn-gunghap-swap');
+      if (swapBtn) {
+        swapBtn.addEventListener('click', () => {
+          // 본인 입력값
+          const p1y = document.getElementById('in-year');
+          const p1m = document.getElementById('in-month');
+          const p1d = document.getElementById('in-day');
+          const p1h = document.getElementById('in-hour');
+          const p1mi = document.getElementById('in-min');
+          const p1name = document.getElementById('person1-name');
+          const p1gm = document.getElementById('gender-m');
+          const p1gf = document.getElementById('gender-f');
+          // 상대 입력값
+          const p2y = document.getElementById('gh-year');
+          const p2m = document.getElementById('gh-month');
+          const p2d = document.getElementById('gh-day');
+          const p2h = document.getElementById('gh-hour');
+          const p2mi = document.getElementById('gh-min');
+          const p2name = document.getElementById('person2-name');
+          const p2gm = document.getElementById('gh-gender-m');
+          const p2gf = document.getElementById('gh-gender-f');
+
+          // 값 임시 저장
+          const tmp = {
+            y: p1y?.value, m: p1m?.value, d: p1d?.value, h: p1h?.value, mi: p1mi?.value,
+            name: p1name?.value,
+            genderM: p1gm?.classList.contains('active')
+          };
+
+          // 본인 ← 상대
+          if(p1y) p1y.value = p2y?.value || '';
+          if(p1m) p1m.value = p2m?.value || '';
+          if(p1d) p1d.value = p2d?.value || '';
+          if(p1h) p1h.value = p2h?.value || '';
+          if(p1mi) p1mi.value = p2mi?.value || '';
+          if(p1name) p1name.value = p2name?.value || '본인';
+          const p2WasM = p2gm?.classList.contains('active');
+          if(typeof setGender === 'function') setGender(p2WasM ? 'm' : 'f');
+
+          // 상대 ← 본인
+          if(p2y) p2y.value = tmp.y || '';
+          if(p2m) p2m.value = tmp.m || '';
+          if(p2d) p2d.value = tmp.d || '';
+          if(p2h) p2h.value = tmp.h || '';
+          if(p2mi) p2mi.value = tmp.mi || '';
+          if(p2name) p2name.value = tmp.name || '상대';
+          if(typeof setGunghapGender === 'function') setGunghapGender(tmp.genderM ? 'm' : 'f');
+
+          updateGunghapButton();
+        });
+      }
+    });
+
+    // 자동 다음 칸 이동 (본인 입력)
+    function setupAutoAdvance(){
+      const fields=[
+        {id:'in-year',max:4,next:'in-month'},
+        {id:'in-month',max:2,next:'in-day'},
+        {id:'in-day',max:2,next:'in-hour'},
+        {id:'in-hour',max:2,next:'in-min'},
+        {id:'gh-year',max:4,next:'gh-month'},
+        {id:'gh-month',max:2,next:'gh-day'},
+        {id:'gh-day',max:2,next:'gh-hour'},
+        {id:'gh-hour',max:2,next:'gh-min'}
+      ];
+      fields.forEach(f=>{
+        const el=document.getElementById(f.id);
+        if(el){
+          el.addEventListener('input',()=>{
+            if(el.value.length>=f.max){
+              const next=document.getElementById(f.next);
+              if(next){next.focus();next.select();}
+            }
+            updateGunghapButton();
+          });
+        }
+      });
+    }
+    document.addEventListener('DOMContentLoaded',setupAutoAdvance);
+
+    // ═══ 피드백 수납 기능 (Firestore 연동, 익명) ═══
+    const guestbookManager = {
+      messages: [],
+      db: null,
+
+      async init() {
+        await this.initFirestore();
+        await this.loadMessages();
+        this.render();
+        this.setupEvents();
+      },
+
+      async initFirestore() {
+        try {
+          // Firebase SDK 로드 및 앱 초기화 대기 (최대 5초)
+          let attempts = 0;
+          while ((typeof firebase === 'undefined' || !firebase.apps || firebase.apps.length === 0) && attempts < 10) {
+            await new Promise(r => setTimeout(r, 500));
+            attempts++;
+          }
+          if (typeof firebase === 'undefined') {
+            console.error('[피드백] Firebase SDK 미로드');
+            return;
+          }
+          if (firebase.apps.length === 0) {
+            console.warn('[피드백] Firebase 앱 초기화 대기 시간 초과');
+            return;
+          }
+          this.db = firebase.firestore();
+          console.log('[피드백] Firestore 연결 완료');
+        } catch (e) {
+          console.error('[피드백] Firestore 초기화 실패:', e);
+          this.db = null;
+        }
+      },
+
+      async loadMessages() {
+        console.log('[피드백] loadMessages 시작, db:', !!this.db);
+        if (this.db) {
+          try {
+            const snapshot = await this.db.collection('guestbook').get();
+            console.log('[피드백] Firestore 문서 수:', snapshot.size);
+            this.messages = snapshot.docs.map(doc => {
+              const d = doc.data();
+              return {
+                id: doc.id,
+                nickname: d.nickname || '익명',
+                uid: d.uid || '',
+                email: d.email || '',
+                text: d.content || d.text || '',
+                timestamp: d.createdAt?.toDate?.()?.getTime() || Date.now()
+              };
+            });
+            this.messages.sort((a, b) => a.timestamp - b.timestamp);
+            console.log('[피드백] 로드 완료:', this.messages.length, '개');
+            return;
+          } catch (e) {
+            console.error('[피드백] Firestore 로드 실패:', e.code, e.message);
+          }
+        } else {
+          console.warn('[피드백] Firestore 미연결, localStorage 폴백');
+        }
+        const stored = localStorage.getItem('yonsei_guestbook');
+        this.messages = stored ? JSON.parse(stored) : [];
+      },
+
+      render() {
+        const container = document.getElementById('guestbook-messages');
+        if (!container) return;
+        if (this.messages.length === 0) {
+          container.innerHTML = '<div class="guestbook-empty"><div class="guestbook-empty-icon">💬</div><p>아직 피드백이 없습니다.<br>첫 번째 피드백을 남겨보세요!</p></div>';
+          return;
+        }
+        const currentUser = window.__getCurrentUser ? window.__getCurrentUser() : null;
+        const isAdmin = window.__isAdmin && window.__isAdmin();
+        container.innerHTML = this.messages.map((m, i) => {
+          const initial = (m.nickname || '?').charAt(0).toUpperCase();
+          const date = new Date(m.timestamp);
+          const time = `${date.getMonth()+1}/${date.getDate()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+          const isOwner = currentUser && m.uid && currentUser.uid === m.uid;
+          const canDelete = isAdmin || isOwner;
+          const isAdminPost = m.email === (window.__ADMIN_EMAIL || '');
+          const adminBadge = isAdminPost ? '<span style="font-size:0.65rem;color:var(--accent);font-weight:600;margin-left:2px">(관리자)</span>' : '';
+          return `<div class="gb-message-item${isOwner ? ' mine' : ''}">
+            <div class="gb-avatar">${initial}</div>
+            <div class="gb-bubble">
+              <div class="gb-bubble-header">
+                <span class="gb-nickname">${this.escapeHtml(m.nickname)}${adminBadge}</span>
+                <span class="gb-time">${time}</span>
+                ${canDelete ? `<button class="gb-delete-btn" data-idx="${i}" title="삭제">🗑️</button>` : ''}
+              </div>
+              <div class="gb-text">${this.escapeHtml(m.text)}</div>
+            </div>
+          </div>`;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+        this.updateInputUI();
+      },
+
+      updateInputUI() {
+        const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+        const msgInput = document.getElementById('gb-message');
+        const loginHint = document.getElementById('gb-login-hint');
+        const sendBtn = document.getElementById('gb-send-btn');
+        if (msgInput) {
+          msgInput.readOnly = !user;
+          msgInput.style.opacity = user ? '1' : '0.5';
+          msgInput.style.cursor = user ? 'text' : 'pointer';
+        }
+        if (loginHint) loginHint.style.display = user ? 'none' : 'inline';
+        if (sendBtn) {
+          sendBtn.disabled = !user;
+          sendBtn.style.opacity = user ? '1' : '0.4';
+        }
+      },
+
+      escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      },
+
+      async addMessage(text) {
+        const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+        if (!user) { alert('로그인이 필요합니다.'); return; }
+        if (!user.nickname) {
+          if (window.__showNicknameModal) window.__showNicknameModal();
+          else alert('먼저 닉네임을 설정해주세요.');
+          return;
+        }
+        const nickname = user.nickname;
+        const uid = user.uid;
+        const email = user.email || '';
+        const timestamp = Date.now();
+
+        if (this.db) {
+          try {
+            const docRef = await this.db.collection('guestbook').add({
+              nickname,
+              uid,
+              email,
+              content: text,
+              createdAt: new Date(timestamp)
+            });
+            this.messages.push({ id: docRef.id, nickname, uid, email, text, timestamp });
+            this.render();
+            return;
+          } catch (e) {
+            console.error('Firestore 저장 실패:', e.code, e.message);
+            alert('피드백 저장 실패: ' + (e.code === 'permission-denied'
+              ? 'Firestore 보안 규칙에서 guestbook 컬렉션의 쓰기를 허용해주세요.'
+              : e.message));
+            return;
+          }
+        }
+        this.messages.push({ id: timestamp.toString(), nickname, uid, email, text, timestamp });
+        localStorage.setItem('yonsei_guestbook', JSON.stringify(this.messages));
+        this.render();
+      },
+
+      async deleteMessage(idx) {
+        const msg = this.messages[idx];
+        if (!msg) return false;
+        const currentUser = window.__getCurrentUser ? window.__getCurrentUser() : null;
+        const isAdmin = window.__isAdmin && window.__isAdmin();
+        const isOwner = currentUser && msg.uid && currentUser.uid === msg.uid;
+        if (!isAdmin && !isOwner) {
+          alert('삭제 권한이 없습니다.');
+          return false;
+        }
+        if (!confirm('이 피드백을 삭제하시겠습니까?')) return false;
+
+        if (this.db && msg.id) {
+          try {
+            await this.db.collection('guestbook').doc(msg.id).delete();
+          } catch (e) {
+            console.warn('Firestore 삭제 실패:', e);
+          }
+        }
+        this.messages.splice(idx, 1);
+        if (!this.db) {
+          localStorage.setItem('yonsei_guestbook', JSON.stringify(this.messages));
+        }
+        this.render();
+        return true;
+      },
+
+      setupEvents() {
+        const msgInput = document.getElementById('gb-message');
+        const charCount = document.getElementById('gb-char-count');
+        const sendBtn = document.getElementById('gb-send-btn');
+
+        if (msgInput && charCount) {
+          msgInput.addEventListener('input', () => {
+            charCount.textContent = msgInput.value.length;
+          });
+          msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.send();
+          });
+          msgInput.addEventListener('click', () => {
+            const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+            if (!user && window.__showLoginModal) window.__showLoginModal();
+          });
+        }
+        if (sendBtn) {
+          sendBtn.addEventListener('click', () => this.send());
+        }
+
+        const container = document.getElementById('guestbook-messages');
+        if (container) {
+          container.addEventListener('click', (e) => {
+            const btn = e.target.closest('.gb-delete-btn');
+            if (btn) {
+              const idx = parseInt(btn.dataset.idx);
+              this.deleteMessage(idx);
+            }
+          });
+        }
+
+        this.updateInputUI();
+      },
+
+      async send() {
+        const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+        if (!user) { window.__showLoginModal && window.__showLoginModal(); return; }
+        const text = document.getElementById('gb-message')?.value.trim();
+        if (!text) { alert('메시지를 입력하세요.'); return; }
+        if (text.length > 200) { alert('메시지는 200자 이내로 작성해주세요.'); return; }
+        await this.addMessage(text);
+        document.getElementById('gb-message').value = '';
+        document.getElementById('gb-char-count').textContent = '0';
+      }
+    };
+    window.__guestbookManager = guestbookManager;
+    document.addEventListener('DOMContentLoaded', () => guestbookManager.init());
+
+    // ═══ 최근 변경 기능 ═══
+    const recentChangesManager = {
+      escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      },
+
+      getRecentPersons() {
+        const dbManager = window.__sajuDbManager;
+        if (!dbManager) return [];
+        const celebrity = dbManager.getAll('celebrity') || [];
+        // contributor.addedAt 기준 정렬 (최신 먼저, 사용자 추가분만)
+        return celebrity
+          .filter(p => p.contributor && p.contributor.addedAt)
+          .sort((a, b) => new Date(b.contributor.addedAt) - new Date(a.contributor.addedAt));
+      },
+
+      formatDate(dateStr) {
+        const d = new Date(dateStr);
+        const now = new Date();
+        const diff = now - d;
+        if (diff < 60000) return '방금 전';
+        if (diff < 3600000) return Math.floor(diff / 60000) + '분 전';
+        if (diff < 86400000) return Math.floor(diff / 3600000) + '시간 전';
+        if (diff < 604800000) return Math.floor(diff / 86400000) + '일 전';
+        return `${d.getMonth() + 1}/${d.getDate()}`;
+      },
+
+      renderSidebar() {
+        const container = document.getElementById('recent-changes-list');
+        if (!container) return;
+        const persons = this.getRecentPersons().slice(0, 10);
+        if (persons.length === 0) {
+          container.innerHTML = '<div style="text-align:center;color:#999;font-size:0.8rem;padding:12px 0">아직 추가된 인물이 없습니다.</div>';
+          return;
+        }
+        container.innerHTML = persons.map(p => {
+          const cName = this.escapeHtml(p.contributor?.nickname || p.contributor?.name || '익명');
+          const date = this.formatDate(p.contributor.addedAt);
+          return `<div class="recent-change-item" onclick="switchTab('celeb')">
+            <span class="recent-change-badge new">NEW</span>
+            <span class="recent-change-name">${this.escapeHtml(p.name)}</span>
+            <span class="recent-change-note">${cName}</span>
+            <span class="recent-change-date">${date}</span>
+          </div>`;
+        }).join('');
+      },
+
+      renderFullList() {
+        const container = document.getElementById('recent-changes-full-list');
+        if (!container) return;
+        const persons = this.getRecentPersons();
+        if (persons.length === 0) {
+          container.innerHTML = '<div style="text-align:center;color:#999;padding:40px 20px">아직 추가된 인물이 없습니다.</div>';
+          return;
+        }
+        container.innerHTML = persons.map(p => {
+          const cName = this.escapeHtml(p.contributor?.nickname || p.contributor?.name || '익명');
+          const date = this.formatDate(p.contributor.addedAt);
+          const genderText = p.gender === 'm' ? '남' : p.gender === 'f' ? '여' : '';
+          const dateStr = `${p.year}년 ${p.month}월 ${p.day}일` + (p.hour !== '' && p.hour !== undefined ? ` ${p.hour}시` : '');
+          return `<div class="recent-change-full-item" onclick="switchTab('celeb')">
+            <div class="rcf-header">
+              <span class="recent-change-badge new">NEW</span>
+              <span class="rcf-name">${this.escapeHtml(p.name)}</span>
+              <span class="rcf-meta">${dateStr}${genderText ? ' · ' + genderText : ''}</span>
+            </div>
+            <div class="rcf-footer">
+              <span class="rcf-contributor">기여자: ${cName}</span>
+              ${p.note ? `<span class="rcf-note">${this.escapeHtml(p.note)}</span>` : ''}
+              <span class="rcf-date">${date}</span>
+            </div>
+          </div>`;
+        }).join('');
+      },
+
+      init() {
+        // DB 로드 대기 후 렌더
+        const tryRender = () => {
+          if (window.__sajuDbManager) {
+            this.renderSidebar();
+            this.renderFullList();
+          } else {
+            setTimeout(tryRender, 500);
+          }
+        };
+        setTimeout(tryRender, 300);
+      }
+    };
+    document.addEventListener('DOMContentLoaded', () => recentChangesManager.init());
+    // 전역 접근 (인물 추가 후 갱신용)
+    window.__refreshRecentChanges = () => {
+      recentChangesManager.renderSidebar();
+      recentChangesManager.renderFullList();
+    };
+
+    // 사이드바 스크롤 추종 기능 비활성화 (사이드바가 이제 레이아웃의 일부)
+
+    // ═══ 헤더 키워드 검색 기능 ═══
+    const headerSearch = {
+      keywords: [
+        { title:'사주 풀이', desc:'일간 기반 10가지 성격 유형 분석', tab:'bti' },
+        { title:'전문 만세력', desc:'사주팔자 천간/지지 오행 분포 상세 분석', tab:'myeongshik' },
+        { title:'궁합', desc:'두 사람의 사주 궁합 분석', tab:'gunghap' },
+        { title:'인물위키', desc:'유명인 사주 정보 데이터베이스', tab:'celeb' },
+        { title:'방명록', desc:'방문자 메시지 남기기', tab:'guestbook' },
+        { title:'오행', desc:'목·화·토·금·수 오행 분석', tab:'myeongshik' },
+        { title:'십성', desc:'비견·겁재·식신·상관·편재·정재·편관·정관·편인·정인', tab:'myeongshik' },
+        { title:'대운', desc:'10년 단위 대운 흐름 분석', tab:'myeongshik' },
+        { title:'세운', desc:'연도별 세운 분석', tab:'myeongshik' },
+        { title:'월운', desc:'월별 운세 분석', tab:'myeongshik' },
+        { title:'용신', desc:'사주의 균형을 맞추는 용신 분석', tab:'myeongshik' },
+        { title:'천간', desc:'갑을병정무기경신임계 10천간', tab:'myeongshik' },
+        { title:'지지', desc:'자축인묘진사오미신유술해 12지지', tab:'myeongshik' },
+        { title:'12운성', desc:'장생·목욕·관대·건록·제왕·쇠·병·사·묘·절·태·양', tab:'myeongshik' },
+        { title:'형충파해', desc:'지지 간 형·충·파·해·원진 관계', tab:'myeongshik' },
+        { title:'일간', desc:'일간(나)을 기준으로 한 사주 해석', tab:'bti' },
+        { title:'절기 달력', desc:'24절기 달력 보기', action:'jeolgi' },
+        { title:'사주 개념 가이드', desc:'사주 입문자를 위한 개념 설명', action:'guide' },
+        { title:'성격', desc:'사주 풀이로 알아보는 나의 성격', tab:'bti' },
+        { title:'MBTI', desc:'사주 기반 MBTI 유사 성격 분석', tab:'bti' },
+        { title:'최고의 궁합', desc:'나와 가장 잘 맞는 궁합 조합 찾기', tab:'gunghap' },
+      ],
+
+      init() {
+        const input = document.getElementById('header-search-input');
+        const results = document.getElementById('header-search-results');
+        if(!input || !results) return;
+
+        input.addEventListener('input', () => {
+          const q = input.value.trim().toLowerCase();
+          if(!q) { results.classList.remove('active'); return; }
+          const matched = this.keywords.filter(k =>
+            k.title.toLowerCase().includes(q) || k.desc.toLowerCase().includes(q)
+          );
+          if(matched.length === 0) {
+            results.innerHTML = '<div class="search-no-result">검색 결과가 없습니다</div>';
+          } else {
+            results.innerHTML = matched.map((item, i) =>
+              `<div class="search-result-item" data-idx="${i}">
+                <div class="search-result-title">${item.title}</div>
+                <div class="search-result-desc">${item.desc}</div>
+              </div>`
+            ).join('');
+            results.querySelectorAll('.search-result-item').forEach((el, i) => {
+              el.addEventListener('click', () => {
+                const item = matched[i];
+                if(item.tab) { switchTab(item.tab); }
+                if(item.action === 'jeolgi') { window.__showJeolgiCalendar && window.__showJeolgiCalendar(); }
+                if(item.action === 'guide') { window.__showSajuGuide && window.__showSajuGuide(); }
+                input.value = '';
+                results.classList.remove('active');
+              });
+            });
+          }
+          results.classList.add('active');
+        });
+
+        input.addEventListener('focus', () => {
+          if(input.value.trim()) results.classList.add('active');
+        });
+
+        document.addEventListener('click', (e) => {
+          if(!e.target.closest('.header-search')) results.classList.remove('active');
+        });
+      }
+    };
+    // headerSearch 비활성화 (검색칸 제거됨)
+
+    // ═══ 랜딩 페이지 통계 갱신 ═══
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        try {
+          const customDb = JSON.parse(localStorage.getItem('celebrity_db_custom') || '[]');
+
+          // Firestore 통계
+          if (typeof firebase !== 'undefined' && firebase.firestore) {
+            const db = firebase.firestore();
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            // 오늘 등록 인물
+            db.collection('celebrity_custom')
+              .where('createdAt', '>=', todayStart)
+              .get()
+              .then(snapshot => {
+                const el = document.getElementById('landing-stat-today');
+                if (el) el.textContent = snapshot.size;
+              }).catch(() => {});
+
+            // 누적 등록 인물 (Firestore 전체 + base DB)
+            db.collection('celebrity_custom').get().then(snapshot => {
+              fetch('celebrity_db.json').then(r=>r.json()).then(base => {
+                const total = base.length + snapshot.size;
+                const el = document.getElementById('landing-stat-cumulative');
+                const el2 = document.getElementById('landing-celeb-count');
+                if (el) el.textContent = total;
+                if (el2) el2.textContent = total + '+';
+              }).catch(() => {
+                const el = document.getElementById('landing-stat-cumulative');
+                if (el) el.textContent = snapshot.size;
+              });
+            }).catch(() => {});
+          } else {
+            // Firestore 없을 때 로컬로 폴백
+            fetch('celebrity_db.json').then(r=>r.json()).then(base => {
+              const total = base.length + customDb.length;
+              const el = document.getElementById('landing-stat-cumulative');
+              const el2 = document.getElementById('landing-celeb-count');
+              if (el) el.textContent = total;
+              if (el2) el2.textContent = total + '+';
+            }).catch(()=>{});
+          }
+
+          // 방문 횟수 (localStorage 기반)
+          const VISIT_KEY = 'saju_visit_stats';
+          const todayStr = new Date().toISOString().slice(0, 10);
+          let visits = {};
+          try { visits = JSON.parse(localStorage.getItem(VISIT_KEY) || '{}'); } catch(e) {}
+          if (!visits.total) visits.total = 0;
+          if (visits.date !== todayStr) { visits.date = todayStr; visits.today = 0; }
+          visits.today = (visits.today || 0) + 1;
+          visits.total = (visits.total || 0) + 1;
+          localStorage.setItem(VISIT_KEY, JSON.stringify(visits));
+
+          const elToday = document.getElementById('landing-stat-visits-today');
+          const elTotal = document.getElementById('landing-stat-visits-total');
+          if (elToday) elToday.textContent = visits.today;
+          if (elTotal) elTotal.textContent = visits.total;
+        } catch(e){}
+      }, 1000);
+    });
+
+    // ═══ 실시간 인기 사주 ═══
+    (function(){
+      const POPULAR_KEY = 'saju_popular_views';
+      const MAX_POPULAR = 10;
+
+      // 조회 기록 함수 (외부에서 호출)
+      window.__trackCelebView = function(name, pillars) {
+        try {
+          const data = JSON.parse(localStorage.getItem(POPULAR_KEY) || '{}');
+          const key = name;
+          if (!data[key]) data[key] = { name, pillars, count: 0, lastViewed: 0 };
+          data[key].count++;
+          data[key].lastViewed = Date.now();
+          data[key].pillars = pillars || data[key].pillars;
+          localStorage.setItem(POPULAR_KEY, JSON.stringify(data));
+          renderPopularSaju();
+        } catch(e){}
+      };
+
+      function renderPopularSaju() {
+        const container = document.getElementById('popular-saju-list');
+        if (!container) return;
+        try {
+          const data = JSON.parse(localStorage.getItem(POPULAR_KEY) || '{}');
+          const sorted = Object.values(data)
+            .sort((a,b) => b.count - a.count || b.lastViewed - a.lastViewed)
+            .slice(0, MAX_POPULAR);
+          if (sorted.length === 0) {
+            container.innerHTML = '<div style="font-size:0.78rem;color:var(--text-dim);padding:6px 0;text-align:center">인물위키에서 인물을 조회하면<br>인기 순위에 반영됩니다.</div>';
+            return;
+          }
+          let html = '';
+          sorted.forEach((item, i) => {
+            const rank = i + 1;
+            const pillarsStr = item.pillars || '';
+            html += `<div class="popular-saju-item" onclick="switchTab('celeb')">
+              <span class="popular-rank">${rank}</span>
+              <span class="popular-name">${item.name}</span>
+              <span class="popular-pillars">${pillarsStr}</span>
+            </div>`;
+          });
+          container.innerHTML = html;
+        } catch(e){ container.innerHTML = ''; }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(renderPopularSaju, 500);
+      });
+    })();
+
+    // ═══ 사이드바 피드백 프록시 ═══
+    document.addEventListener('DOMContentLoaded', () => {
+      const sidebarSend = document.getElementById('sidebar-gb-send');
+      const sidebarMsg = document.getElementById('sidebar-gb-message');
+      if (sidebarSend && sidebarMsg) {
+        sidebarSend.addEventListener('click', () => {
+          const mainInput = document.getElementById('gb-message');
+          const mainSend = document.getElementById('gb-send-btn');
+          if (mainInput && mainSend) {
+            mainInput.value = sidebarMsg.value;
+            mainSend.click();
+            sidebarMsg.value = '';
+          }
+        });
+        sidebarMsg.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') sidebarSend.click();
+        });
+      }
+      // 주기적으로 메인 방명록 메시지를 사이드바에 미러링
+      setInterval(() => {
+        const mainMsgs = document.getElementById('guestbook-messages');
+        const sidebarMsgs = document.getElementById('sidebar-guestbook-messages');
+        if (mainMsgs && sidebarMsgs) {
+          const items = mainMsgs.querySelectorAll('.gb-message-item');
+          let html = '';
+          const shown = Math.min(items.length, 5);
+          for (let i = items.length - shown; i < items.length; i++) {
+            const nick = items[i].querySelector('.gb-nickname')?.textContent || '';
+            const text = items[i].querySelector('.gb-text')?.textContent || '';
+            html += `<div style="font-size:0.75rem;padding:4px 0;border-bottom:1px solid var(--border)"><b>${nick}</b> ${text}</div>`;
+          }
+          sidebarMsgs.innerHTML = html || '<div style="font-size:0.75rem;color:var(--text-dim);padding:8px 0">아직 피드백이 없습니다.</div>';
+        }
+      }, 3000);
+    });
+
+    // ═══ 최근 변경 사이드바 카드 ═══
+    // 최근 변경 주기적 갱신 (recentChangesManager 재사용)
+    document.addEventListener('DOMContentLoaded', () => {
+      setInterval(() => {
+        if (window.__refreshRecentChanges) window.__refreshRecentChanges();
+      }, 30000);
+    });
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       게시판 시스템
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <script>
+    const boardManager = {
+      currentCategory: 'saju',
+      currentPage: 1,
+      pageSize: 15,
+      posts: [],
+      totalPages: 1,
+
+      init() {
+        // 카테고리 탭 이벤트
+        document.querySelectorAll('.board-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            this.switchCategory(tab.dataset.cat);
+          });
+        });
+        // 취소/등록 버튼
+        const cancelBtn = document.getElementById('board-cancel-btn');
+        const submitBtn = document.getElementById('board-submit-btn');
+        if (cancelBtn) cancelBtn.addEventListener('click', () => this.showList());
+        if (submitBtn) submitBtn.addEventListener('click', () => this.submitPost());
+        this.loadPosts();
+      },
+
+      escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+      },
+
+      switchCategory(cat) {
+        this.currentCategory = cat;
+        this.currentPage = 1;
+        document.querySelectorAll('.board-tab').forEach(t => {
+          t.classList.toggle('active', t.dataset.cat === cat);
+        });
+        this.loadPosts();
+      },
+
+      async loadPosts() {
+        const listEl = document.getElementById('board-posts-list');
+        if (!listEl) return;
+        listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.85rem">불러오는 중...</div>';
+
+        try {
+          if (typeof firebase === 'undefined' || !firebase.firestore) {
+            listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.85rem">Firestore 미연결</div>';
+            return;
+          }
+          const db = firebase.firestore();
+          const snapshot = await db.collection('board_posts')
+            .where('category', '==', this.currentCategory)
+            .orderBy('createdAt', 'desc')
+            .get();
+
+          this.posts = [];
+          snapshot.forEach(doc => {
+            this.posts.push({ id: doc.id, ...doc.data() });
+          });
+          this.totalPages = Math.max(1, Math.ceil(this.posts.length / this.pageSize));
+          if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+          this.render();
+        } catch (e) {
+          console.error('게시글 로드 실패:', e);
+          listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.85rem">게시글을 불러올 수 없습니다.</div>';
+        }
+      },
+
+      render() {
+        const listEl = document.getElementById('board-posts-list');
+        const pagEl = document.getElementById('board-pagination');
+        const btnWrap = document.getElementById('board-write-btn-wrap');
+        if (!listEl) return;
+
+        // 페이지네이션 슬라이스
+        const start = (this.currentPage - 1) * this.pageSize;
+        const pageItems = this.posts.slice(start, start + this.pageSize);
+
+        if (pageItems.length === 0) {
+          listEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:0.85rem">아직 게시글이 없습니다.</div>';
+        } else {
+          listEl.innerHTML = pageItems.map(p => {
+            const date = p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt);
+            const dateStr = `${date.getMonth()+1}/${date.getDate()}`;
+            const authorName = this.escapeHtml(p.author?.nickname || p.author?.email?.split('@')[0] || '익명');
+            return `<div class="board-post-row" data-id="${p.id}">
+              <span class="board-post-title">${this.escapeHtml(p.title)}</span>
+              <span class="board-post-meta">${authorName} · ${dateStr} · 조회 ${p.views || 0}</span>
+            </div>`;
+          }).join('');
+
+          // 클릭 이벤트
+          listEl.querySelectorAll('.board-post-row').forEach(row => {
+            row.addEventListener('click', () => this.viewPost(row.dataset.id));
+          });
+        }
+
+        // 페이지네이션
+        if (pagEl) {
+          if (this.totalPages <= 1) {
+            pagEl.innerHTML = '';
+          } else {
+            let html = '';
+            for (let i = 1; i <= this.totalPages; i++) {
+              html += `<button class="board-page-btn${i === this.currentPage ? ' active' : ''}" data-page="${i}">${i}</button>`;
+            }
+            pagEl.innerHTML = html;
+            pagEl.querySelectorAll('.board-page-btn').forEach(btn => {
+              btn.addEventListener('click', () => {
+                this.currentPage = parseInt(btn.dataset.page);
+                this.render();
+              });
+            });
+          }
+        }
+
+        // 글쓰기 버튼
+        if (btnWrap) {
+          const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+          const isAdmin = window.__isAdmin ? window.__isAdmin() : false;
+          const canWrite = (this.currentCategory === 'free' && user) || (this.currentCategory === 'saju' && isAdmin);
+          btnWrap.innerHTML = canWrite
+            ? '<button class="board-btn board-btn-write" id="board-write-trigger">글쓰기</button>'
+            : '';
+          const trigger = document.getElementById('board-write-trigger');
+          if (trigger) trigger.addEventListener('click', () => this.showWriteForm());
+        }
+      },
+
+      showList() {
+        document.getElementById('board-list-view').style.display = '';
+        document.getElementById('board-view').style.display = 'none';
+        document.getElementById('board-write-form').style.display = 'none';
+        this.loadPosts();
+      },
+
+      showWriteForm() {
+        document.getElementById('board-list-view').style.display = 'none';
+        document.getElementById('board-view').style.display = 'none';
+        document.getElementById('board-write-form').style.display = '';
+        document.getElementById('board-write-title').value = '';
+        document.getElementById('board-write-content').value = '';
+        document.getElementById('board-write-title').focus();
+      },
+
+      async submitPost() {
+        const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+        if (!user) { alert('로그인이 필요합니다.'); return; }
+
+        const title = (document.getElementById('board-write-title')?.value || '').trim();
+        const content = (document.getElementById('board-write-content')?.value || '').trim();
+        if (!title) { alert('제목을 입력하세요.'); return; }
+        if (!content) { alert('내용을 입력하세요.'); return; }
+        if (title.length > 100) { alert('제목은 100자 이내로 입력하세요.'); return; }
+        if (content.length > 5000) { alert('내용은 5000자 이내로 입력하세요.'); return; }
+
+        const submitBtn = document.getElementById('board-submit-btn');
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '등록 중...'; }
+
+        try {
+          const db = firebase.firestore();
+          await db.collection('board_posts').add({
+            category: this.currentCategory,
+            title,
+            content,
+            author: {
+              uid: user.uid,
+              nickname: user.nickname || null,
+              email: user.email
+            },
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            views: 0
+          });
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '등록'; }
+          if (window.__showNotification) window.__showNotification('게시글이 등록되었습니다.', 'success');
+          this.showList();
+        } catch (e) {
+          console.error('게시글 등록 실패:', e);
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '등록'; }
+          alert('게시글 등록에 실패했습니다.');
+        }
+      },
+
+      async viewPost(id) {
+        const viewEl = document.getElementById('board-view-content');
+        if (!viewEl) return;
+
+        document.getElementById('board-list-view').style.display = 'none';
+        document.getElementById('board-write-form').style.display = 'none';
+        document.getElementById('board-view').style.display = '';
+
+        viewEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-dim)">불러오는 중...</div>';
+
+        try {
+          const db = firebase.firestore();
+          const doc = await db.collection('board_posts').doc(id).get();
+          if (!doc.exists) { viewEl.innerHTML = '<div>게시글을 찾을 수 없습니다.</div>'; return; }
+          const p = doc.data();
+
+          // 조회수 증가
+          try { await db.collection('board_posts').doc(id).update({ views: (p.views || 0) + 1 }); } catch(e) {}
+
+          const date = p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt);
+          const dateStr = `${date.getFullYear()}.${date.getMonth()+1}.${date.getDate()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+          const authorName = this.escapeHtml(p.author?.nickname || p.author?.email?.split('@')[0] || '익명');
+
+          const user = window.__getCurrentUser ? window.__getCurrentUser() : null;
+          const isAdmin = window.__isAdmin ? window.__isAdmin() : false;
+          const canDelete = user && (p.author?.uid === user.uid || isAdmin);
+
+          viewEl.innerHTML = `
+            <div class="board-view-header">
+              <h3 class="board-view-title">${this.escapeHtml(p.title)}</h3>
+              <div class="board-view-meta">${authorName} · ${dateStr} · 조회 ${(p.views || 0) + 1}</div>
+            </div>
+            <div class="board-view-body">${this.escapeHtml(p.content).replace(/\n/g, '<br>')}</div>
+            <div class="board-view-actions">
+              <button class="board-btn board-btn-cancel" id="board-back-btn">목록으로</button>
+              ${canDelete ? `<button class="board-btn board-btn-delete" id="board-delete-btn" data-id="${id}">삭제</button>` : ''}
+            </div>
+          `;
+          document.getElementById('board-back-btn')?.addEventListener('click', () => this.showList());
+          document.getElementById('board-delete-btn')?.addEventListener('click', () => this.deletePost(id));
+        } catch (e) {
+          console.error('게시글 조회 실패:', e);
+          viewEl.innerHTML = '<div>게시글을 불러올 수 없습니다.</div>';
+        }
+      },
+
+      async deletePost(id) {
+        if (!confirm('게시글을 삭제하시겠습니까?')) return;
+        try {
+          const db = firebase.firestore();
+          await db.collection('board_posts').doc(id).delete();
+          if (window.__showNotification) window.__showNotification('게시글이 삭제되었습니다.', 'info');
+          this.showList();
+        } catch (e) {
+          console.error('게시글 삭제 실패:', e);
+          alert('삭제에 실패했습니다.');
+        }
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => boardManager.init());
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════
+       이용약관 / 개인정보처리방침 모달
+       ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="terms-modal" class="legal-modal">
+    <div class="legal-modal-content">
+      <button class="legal-modal-close" onclick="closeLegalModal()">&times;</button>
+      <div class="legal-modal-body" id="terms-modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // 이용약관 내용
+    const termsContent = `
+      <h2>연세사주 이용약관</h2>
+      <p class="legal-date"><strong>시행일자: 2026년 2월 2일</strong></p>
+      <p>본 약관은 '연세사주'(이하 "서비스")의 이용과 관련하여 운영자와 이용자 간의 권리·의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.</p>
+      <hr>
+
+      <h3>제1조(목적)</h3>
+      <p>이 약관은 운영자 반우석(이하 "운영자")이 제공하는 연세사주 서비스의 이용조건 및 절차, 운영자와 이용자 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+
+      <h3>제2조(정의)</h3>
+      <ol>
+        <li><strong>서비스</strong>: 운영자가 제공하는 사주(명리) 기반 정보 제공 및 관련 기능 일체를 의미합니다.</li>
+        <li><strong>이용자</strong>: 본 약관에 따라 서비스를 이용하는 회원 및 비회원을 의미합니다.</li>
+        <li><strong>회원</strong>: SNS 로그인(구글/네이버/카카오)을 통해 계정을 생성하여 서비스 이용계약을 체결한 자를 의미합니다.</li>
+        <li><strong>비회원</strong>: 로그인 없이 서비스를 이용하는 자를 의미합니다.</li>
+        <li><strong>명식정보</strong>: 사주 풀이를 위해 이용자가 입력하는 생년월일시, 이름, 성별 등 정보를 의미합니다.</li>
+        <li><strong>콘텐츠</strong>: 서비스에서 제공되는 결과 화면, 문구, 시각화, 구성요소 및 기타 정보 일체를 의미합니다.</li>
+      </ol>
+
+      <h3>제3조(약관의 게시 및 개정)</h3>
+      <ol>
+        <li>운영자는 본 약관을 서비스 내에 게시하거나 기타 합리적인 방법으로 공지합니다.</li>
+        <li>운영자는 관련 법령을 위반하지 않는 범위에서 약관을 개정할 수 있습니다.</li>
+        <li>약관이 개정되는 경우 시행일 및 개정사유를 명시하여 시행일 7일 전부터 공지합니다. 다만 이용자에게 불리한 내용은 30일 전부터 공지할 수 있습니다.</li>
+        <li>이용자가 개정 약관 시행일 이후에도 서비스를 계속 이용하는 경우, 개정 약관에 동의한 것으로 봅니다.</li>
+      </ol>
+
+      <h3>제4조(서비스의 제공 및 특징)</h3>
+      <ol>
+        <li>서비스는 사주(명리) 기반의 정보·해석·참고자료 등을 제공하며, <strong>유료 서비스는 제공하지 않습니다.</strong></li>
+        <li>서비스는 회원/비회원 모두 이용할 수 있습니다.</li>
+        <li>단, <strong>사주 명식 저장 등 일부 기능은 로그인(회원)에게만 제공</strong>될 수 있습니다.</li>
+      </ol>
+
+      <h3>제5조(회원가입 및 SNS 로그인)</h3>
+      <ol>
+        <li>회원가입은 이용자가 SNS 계정(구글/네이버/카카오)으로 로그인하고, 본 약관 및 개인정보처리방침에 동의함으로써 성립합니다.</li>
+        <li>운영자는 필요한 경우 추가 정보(예: 명식 저장을 위한 이름/생년월일시/성별 입력)를 요구할 수 있습니다.</li>
+        <li><strong>만 14세 미만</strong> 이용자가 회원 기능을 이용하기 위해 개인정보 제공이 필요한 경우, 관련 법령에 따라 <strong>법정대리인의 동의가 필요</strong>할 수 있습니다.</li>
+      </ol>
+
+      <h3>제6조(계정 관리 및 이용 제한)</h3>
+      <ol>
+        <li>회원은 SNS 로그인 정보 및 본인 인증 수단의 관리책임을 부담하며, 계정의 부정사용이 의심되는 경우 즉시 운영자에게 문의해야 합니다.</li>
+        <li>운영자는 다음 각 호에 해당하는 경우 사전 통지 없이 서비스 이용을 제한하거나 중단할 수 있습니다.
+          <ol type="a">
+            <li>타인의 계정을 도용하거나 부정한 방법으로 이용한 경우</li>
+            <li>서비스 운영을 방해하거나 비정상적 트래픽을 유발하는 행위</li>
+            <li>법령, 공서양속 또는 본 약관을 위반하는 행위</li>
+            <li>기타 운영자가 합리적으로 필요하다고 판단하는 경우</li>
+          </ol>
+        </li>
+      </ol>
+
+      <h3>제7조(이용자의 의무)</h3>
+      <p>이용자는 다음 행위를 하여서는 안 됩니다.</p>
+      <ol>
+        <li>허위정보 입력 또는 타인의 개인정보를 무단으로 입력하는 행위</li>
+        <li>서비스 또는 서버/네트워크에 과부하를 유발하거나, 해킹·크롤링·리버스엔지니어링 등 보안 침해 행위</li>
+        <li>서비스 콘텐츠를 무단 복제·배포·전송·상업적 이용하는 행위</li>
+        <li>운영자 또는 제3자의 명예를 훼손하거나 불법·유해 정보를 게시/유포하는 행위</li>
+        <li>기타 법령 또는 본 약관에 위반되는 행위</li>
+      </ol>
+
+      <h3>제8조(서비스 제공의 중단)</h3>
+      <ol>
+        <li>운영자는 시스템 점검, 장애, 천재지변, 통신사고 등 불가피한 사유가 있는 경우 서비스 제공을 일시 중단할 수 있습니다.</li>
+        <li>운영자는 가능한 경우 사전에 공지하되, 긴급한 경우 사후 공지할 수 있습니다.</li>
+      </ol>
+
+      <h3>제9조(지식재산권)</h3>
+      <ol>
+        <li>서비스에 포함된 콘텐츠 및 저작물에 대한 권리는 운영자 또는 정당한 권리자에게 귀속됩니다.</li>
+        <li>이용자는 운영자의 사전 동의 없이 서비스 콘텐츠를 복제, 배포, 전송, 2차적 저작물 작성, 상업적 이용할 수 없습니다(법령상 허용되는 경우는 제외).</li>
+      </ol>
+
+      <h3>제10조(면책 및 책임의 제한)</h3>
+      <ol>
+        <li>서비스에서 제공되는 사주/운세/해석 등은 <strong>정보 제공 및 참고 목적</strong>이며, 특정 결과(재물, 건강, 연애, 법률, 투자 등)를 보장하지 않습니다.</li>
+        <li>운영자는 이용자의 개인적 의사결정(의료·법률·투자 등)에 대해 책임을 지지 않으며, 필요한 경우 전문가 상담을 권장합니다.</li>
+        <li>운영자는 무료로 제공되는 서비스의 특성상, 법령상 허용되는 범위 내에서 간접손해, 특별손해 등에 대해 책임을 제한할 수 있습니다.</li>
+        <li>다만 운영자의 고의 또는 중대한 과실로 인한 손해에 대해서는 관련 법령에 따릅니다.</li>
+      </ol>
+
+      <h3>제11조(분쟁 해결)</h3>
+      <ol>
+        <li>운영자는 이용자의 정당한 의견이나 불만을 처리하기 위해 노력합니다.</li>
+        <li>분쟁이 발생할 경우, 운영자와 이용자는 성실히 협의하여 해결하도록 합니다.</li>
+      </ol>
+
+      <h3>제12조(준거법 및 관할)</h3>
+      <ol>
+        <li>본 약관은 대한민국 법령을 준거법으로 합니다.</li>
+        <li>서비스 이용과 관련하여 분쟁이 발생한 경우, 민사소송법상 관할법원을 전속관할로 합니다.</li>
+      </ol>
+
+      <h3>제13조(문의)</h3>
+      <ul>
+        <li>이메일: <a href="mailto:aksd374@yonsei.ac.kr">aksd374@yonsei.ac.kr</a></li>
+        <li>전화: 010-4729-8645</li>
+      </ul>
+
+      <p class="legal-addendum"><strong>부칙</strong> 본 약관은 2026년 2월 2일부터 시행합니다.</p>
+    `;
+
+    // 개인정보처리방침 내용
+    const privacyContent = `
+      <h2>연세사주 개인정보처리방침</h2>
+      <p class="legal-date"><strong>시행일자: 2026년 2월 2일</strong></p>
+      <p>운영자 반우석(이하 "운영자")은 「개인정보 보호법」 등 관련 법령을 준수하며, 이용자의 개인정보를 보호하기 위해 다음과 같이 개인정보처리방침을 수립·공개합니다.</p>
+      <hr>
+
+      <h3>1. 개인정보의 처리 목적</h3>
+      <p>운영자는 다음 목적 범위 내에서 개인정보를 처리합니다.</p>
+      <ol>
+        <li>사주 서비스 제공(명식 입력값 기반 결과 제공)</li>
+        <li>회원 식별, 로그인 유지, 명식 저장/불러오기 등 회원 기능 제공</li>
+        <li>문의/민원 처리, 공지사항 전달, 분쟁 대응</li>
+        <li>서비스 안정성 확보, 부정 이용 방지, 통계 및 품질 개선</li>
+      </ol>
+
+      <h3>2. 처리하는 개인정보 항목 및 수집 방법</h3>
+
+      <h4>(1) 이용자가 직접 입력하는 정보(사주 서비스용)</h4>
+      <ul>
+        <li><strong>필수(서비스 이용 시 입력될 수 있음)</strong>: 이름, 생년월일, 출생시간, 성별</li>
+        <li><strong>비회원 이용 시</strong>: 운영자는 비회원의 입력값을 결과 제공을 위해 <strong>일시적으로 처리</strong>할 수 있으며, 명식 저장 기능을 사용하지 않는 한 <strong>장기 보관을 하지 않도록 운영</strong>합니다(서비스 구조상 보관이 필요한 경우에는 본 방침의 보유기간에 따릅니다).</li>
+      </ul>
+
+      <h4>(2) SNS 로그인 시 수집되는 정보(회원 기능 제공)</h4>
+      <ul>
+        <li><strong>필수</strong>: SNS 계정 식별자(고유 ID 등)</li>
+        <li><strong>선택 또는 제공되는 경우</strong>: 이메일, 닉네임(이름), 프로필 이미지</li>
+      </ul>
+      <p class="legal-note">※ 실제 수집 항목은 이용자가 해당 SNS(구글/네이버/카카오)에서 동의한 범위 및 제공 정책에 따라 달라질 수 있습니다.</p>
+
+      <h4>(3) 자동 수집 정보(서비스 이용 과정에서 생성)</h4>
+      <ul>
+        <li>접속기록(로그), IP 주소, 쿠키, 기기/브라우저 정보, 이용기록, 오류기록 등</li>
+      </ul>
+
+      <h4>(4) 수집 방법</h4>
+      <ul>
+        <li>웹사이트 입력/제출, SNS 로그인(OAuth 등) 연동, 서비스 이용 과정에서 자동 생성</li>
+      </ul>
+
+      <h3>3. 개인정보의 보유 및 이용기간</h3>
+      <p>운영자는 원칙적으로 개인정보 처리 목적이 달성되면 지체 없이 파기합니다. 다만 아래의 경우는 예외로 합니다.</p>
+      <ol>
+        <li><strong>회원정보(SNS 식별자 등)</strong>: 회원 탈퇴 시까지</li>
+        <li><strong>저장된 명식정보</strong>: 이용자가 삭제하거나 회원 탈퇴 시까지</li>
+        <li><strong>문의/민원 기록</strong>: 처리 완료 후 분쟁 대비를 위해 합리적인 기간 보관 후 파기</li>
+        <li><strong>서비스 이용기록/접속기록</strong>: 서비스 안정성 및 보안 목적 달성 후 파기(단, 관련 법령상 보관 의무가 있는 경우 해당 기간 보관)</li>
+      </ol>
+      <p class="legal-note">※ 운영자가 법령에 따른 보관의무가 있는 항목을 처리하게 되는 경우, 해당 법령에서 정한 기간 동안 보관 후 파기합니다.</p>
+
+      <h3>4. 개인정보의 제3자 제공</h3>
+      <p>운영자는 원칙적으로 이용자의 개인정보를 <strong>외부 제3자에게 제공하지 않습니다.</strong></p>
+      <p>다만 다음의 경우에는 예외로 할 수 있습니다.</p>
+      <ol>
+        <li>이용자가 사전에 동의한 경우</li>
+        <li>법령에 근거가 있거나, 수사기관 등의 적법한 절차에 따른 요청이 있는 경우</li>
+        <li><strong>동일 운영자가 제공하는 연세사주 업그레이드 앱 또는 사주 소개팅 플랫폼 등 "운영자 내부 서비스"와의 연동이 필요한 경우</strong>
+          <ul><li>이 경우에도 목적·범위를 최소화하며, 법령상 별도 동의가 필요한 경우 사전에 동의를 받습니다.</li></ul>
+        </li>
+      </ol>
+
+      <h3>5. 개인정보 처리의 위탁</h3>
+      <p>운영자는 원활한 서비스 제공을 위해 개인정보 처리업무를 외부에 위탁할 수 있습니다.</p>
+      <p>위탁이 발생하는 경우 운영자는 관련 법령에 따라 위탁계약을 체결하고, 위탁받는 자 및 위탁업무 내용 등을 서비스 내에 공지 또는 본 방침을 통해 공개하겠습니다.</p>
+      <p class="legal-note">※ 현재 SNS 로그인 제공을 위해 구글/네이버/카카오 등 외부 인증 서비스를 이용할 수 있으며, 해당 사업자의 개인정보 처리에 관해서는 각 사업자의 정책이 적용됩니다.</p>
+
+      <h3>6. 개인정보의 파기 절차 및 방법</h3>
+      <ol>
+        <li><strong>파기 절차</strong>: 목적 달성 후 내부 방침에 따라 일정 기간 보관(필요 시) 후 파기합니다.</li>
+        <li><strong>파기 방법</strong>
+          <ul>
+            <li>전자적 파일: 복구 불가능한 방법으로 영구 삭제</li>
+            <li>출력물: 분쇄 또는 소각</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3>7. 이용자 및 법정대리인의 권리와 행사방법</h3>
+      <ol>
+        <li>이용자는 언제든지 본인 개인정보에 대해 열람, 정정, 삭제, 처리정지, 동의철회(회원탈퇴)를 요청할 수 있습니다.</li>
+        <li>요청은 아래 문의처로 접수할 수 있으며, 운영자는 본인 확인 후 지체 없이 처리합니다.</li>
+        <li><strong>만 14세 미만 아동</strong>의 경우, 법정대리인이 아동의 개인정보에 관한 권리를 행사할 수 있습니다.</li>
+      </ol>
+
+      <h3>8. 개인정보의 안전성 확보조치</h3>
+      <p>운영자는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취합니다.</p>
+      <ul>
+        <li>접근권한 관리 및 최소한의 인원만 접근</li>
+        <li>개인정보 및 인증정보 보호를 위한 기술적 조치(암호화/토큰 처리 등 가능한 범위 내)</li>
+        <li>접속기록 보관 및 위·변조 방지</li>
+        <li>보안 업데이트 및 취약점 점검(가능한 범위 내)</li>
+      </ul>
+
+      <h3>9. 쿠키(Cookie)의 사용</h3>
+      <p>운영자는 로그인 유지, 이용환경 개선 등을 위해 쿠키를 사용할 수 있습니다. 이용자는 브라우저 설정을 통해 쿠키 저장을 거부하거나 삭제할 수 있습니다. 다만 쿠키 저장을 거부할 경우 일부 기능(로그인 유지 등)이 제한될 수 있습니다.</p>
+
+      <h3>10. 개인정보 보호책임자 및 문의처</h3>
+      <ul>
+        <li><strong>개인정보 보호책임자/담당자</strong>: 반우석</li>
+        <li><strong>이메일</strong>: <a href="mailto:aksd374@yonsei.ac.kr">aksd374@yonsei.ac.kr</a></li>
+        <li><strong>전화</strong>: 010-4729-8645</li>
+      </ul>
+
+      <h3>11. 고지의무</h3>
+      <p>본 개인정보처리방침의 내용 추가·삭제·수정이 있을 경우, 시행일 7일 전부터 서비스 내 공지 등 합리적인 방법으로 고지합니다.</p>
+      <p>본 방침은 <strong>2026년 2월 2일</strong>부터 시행합니다.</p>
+    `;
+
+    // 모달 열기
+    function openLegalModal(type) {
+      const modal = document.getElementById('terms-modal');
+      const body = document.getElementById('terms-modal-body');
+      body.innerHTML = type === 'terms' ? termsContent : privacyContent;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // 모달 닫기
+    function closeLegalModal() {
+      const modal = document.getElementById('terms-modal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // 모달 외부 클릭 시 닫기
+    document.getElementById('terms-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeLegalModal();
+    });
+
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLegalModal();
+    });
+  </script>
+</body>
+</html>
